@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e22">
+  <title>Gardiens des planètes</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='17' fill='%2374d6ba'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header>
+    <div><span class="eyebrow">MISSION • SECTEUR 07</span><h1>Gardiens des planètes</h1></div>
+    <button id="pause" disabled>Pause (P)</button>
+  </header>
+  <main>
+    <section class="arena" aria-label="Zone de jeu">
+      <div class="hud" aria-label="Statistiques de la mission">
+        <span>Score <strong id="score">0</strong></span>
+        <span>Vague <strong id="wave">1 / 6</strong></span>
+        <span>Coque <strong id="health">100 %</strong></span>
+        <span>Crédits <strong id="credits">60</strong></span>
+        <span>Record <strong id="best">0</strong></span>
+      </div>
+      <canvas id="space" width="1000" height="650" tabindex="0" aria-label="Espace de jeu. Pilotez avec les flèches ou WASD, visez avec la souris et tirez avec le clic ou Espace. Sélectionnez une planète avec les boutons de colonies.">
+        Ce jeu nécessite un navigateur prenant en charge Canvas et JavaScript.
+      </canvas>
+      <div id="overlay" class="overlay">
+        <div class="panel">
+          <span class="eyebrow">PROTÉGER • BÂTIR • SURVIVRE</span>
+          <h2 id="overlay-title">La galaxie compte sur vous</h2>
+          <p id="overlay-text">Défendez trois colonies pendant six vagues. Éliminez les menaces, construisez des maisons et accueillez de nouveaux habitants.</p>
+          <button id="start" class="primary">Commencer la mission</button>
+        </div>
+      </div>
+      <div class="touch-controls" aria-label="Commandes tactiles">
+        <div class="dpad">
+          <button data-move="up" aria-label="Monter">▲</button>
+          <button data-move="left" aria-label="Aller à gauche">◀</button>
+          <button data-move="down" aria-label="Descendre">▼</button>
+          <button data-move="right" aria-label="Aller à droite">▶</button>
+        </div>
+        <div><span class="touch-hint">Touchez l’espace pour viser</span><button id="fire" aria-label="Tirer, maintenir pour tir continu">TIR ◎</button></div>
+      </div>
+    </section>
+    <aside aria-label="Gestion des colonies">
+      <span class="eyebrow">VOS MONDES</span>
+      <h2>Conseil des colonies</h2>
+      <div id="planets" class="planet-list" aria-label="Sélection de planète"></div>
+      <section class="management">
+        <h3 id="selected-name">Colonie sélectionnée</h3>
+        <p id="selected-info"></p>
+        <button id="build" class="primary" disabled>Construire une maison · 30 crédits</button>
+        <button id="protect" disabled>Protéger · bouclier 8 s · 20 crédits</button>
+        <button id="sacrifice" class="danger" disabled>Détruire volontairement cette planète</button>
+        <p class="muted">Une maison accueille jusqu’à 5 habitants : +1 toutes les 4 secondes. Maximum 8 maisons par planète. Une attaque détruit une maison et fait perdre jusqu’à 3 habitants.</p>
+      </section>
+      <p id="notice" role="status" aria-live="polite">Prêt pour le décollage.</p>
+      <details>
+        <summary>Règles et commandes</summary>
+        <p>Survivez à 6 vagues avec au moins une colonie. Défaite si la coque atteint zéro ou si toutes les colonies disparaissent. Les tirs alliés ne touchent jamais les planètes.</p>
+        <p><b>Piloter :</b> flèches, WASD ou ZQSD. <b>Viser :</b> souris ou toucher l’espace. <b>Tirer :</b> clic maintenu, Espace ou bouton TIR. Sur mobile, maintenez les flèches tactiles. <b>Pause :</b> P, Échap ou bouton.</p>
+        <p><b>Menaces :</b> météorites lentes (roches), comètes rapides (traînées), monstres (tentacules), missiles guidés (triangles) et lasers (lignes roses annoncées en pointillés). Tous sont neutralisables, sauf les faisceaux : esquivez-les !</p>
+        <p>Les monstres annoncent puis lancent leurs lasers. Les boucliers absorbent les attaques pendant 8 secondes. Chaque menace détruite rapporte des crédits et des points. Chaque vague achevée répare 15 points de coque et rapporte 25 crédits.</p>
+        <p>Le sacrifice est facultatif et irréversible : il supprime tous les habitants et maisons, coûte 100 points et ne rapporte rien. Il ne peut pas être annulé après confirmation.</p>
+      </details>
+      <p class="muted" id="losses">Planètes perdues : 0 · Sacrifices : 0 · Menaces neutralisées : 0</p>
+    </aside>
+  </main>
+  <dialog id="confirm">
+    <form method="dialog">
+      <h2>Détruire cette colonie ?</h2>
+      <p id="confirm-text"></p>
+      <p>Cette décision est définitive. Aucun sacrifice n’est nécessaire pour gagner.</p>
+      <div class="dialog-actions"><button value="cancel" autofocus>Annuler</button><button value="destroy" class="danger">Confirmer la destruction</button></div>
+    </form>
+  </dialog>
+  <footer>Un petit vaisseau. Trois mondes. À vous de choisir leur avenir.</footer>
+  <noscript>Activez JavaScript pour jouer à Gardiens des planètes.</noscript>
+</body>
+</html>
