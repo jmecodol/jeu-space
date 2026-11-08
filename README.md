@@ -4,6 +4,14 @@ Jeu spatial 2D en français, autonome, sans framework, compilation, backend ni r
 
 ## Jouer
 
+### Canons de hublot et rotation complète
+
+En vue cockpit, choisissez l’un des **quatre canons aux coins du hublot**. Les projectiles partent du coin sélectionné, pas du repère NAV. Cliquez ou glissez dans l’espace pour fixer l’objectif ; celui-ci reste attaché au monde après relâchement, même lorsque vous tournez. Activez **Tir continu** pour maintenir les tirs vers cet objectif, ou maintenez clic, Espace ou TIR. Pause et changement d’outil désactivent le tir continu.
+
+Maintenez **↶ / ↷** ou **Q / E** pour tourner sans butée à 360 degrés dans les deux sens. Au clavier, Tab puis Entrée sur les boutons de rotation effectue un pas de 15 degrés. Le compteur indique l’angle ; huit étoiles nommées, espacées de 45 degrés, permettent de reconnaître le retour au même horizon après un tour complet. **Recentrer** revient à zéro. Les flèches/WASD et les commandes à deux doigts conservent le déplacement et la visée ; en cockpit Q sert désormais à tourner, A à aller à gauche.
+
+Il s’agit d’une rotation dans le plan du jeu 2D (roulis du hublot), pas d’une navigation sphérique 3D avec lacet et tangage indépendants. Les canons et le cadre restent fixes tandis que la carte, les étoiles et les cibles tournent. La réduction des animations ralentit la rotation volontaire. Certains objets peuvent sortir du hublot lors d’un virage ; recentrez ou poursuivez le tour pour les retrouver.
+
 ### Cockpit, console intégrée et retour au pilotage
 
 - La zone de jeu occupe la fenêtre sans menus placés sous la carte. **Console** ouvre un panneau superposé défilant ; **Fermer** le referme. Les commandes restent dans l’écran, sur ordinateur, téléphone et tablette.

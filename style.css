@@ -109,6 +109,18 @@ canvas { position: absolute; inset: 110px 0 60px; width: 100%; height: calc(100%
 .threat-gallery button { padding: 5px; font-size: .75rem; }
 .threat-gallery svg { display: block; margin: auto; width: 72px; height: 48px; }
 .threat-gallery button[aria-pressed="true"] { border: 2px solid #ffe18a; background: #344959; }
+.cannon-controls { position: absolute; inset: 110px 0 60px; pointer-events: none; z-index: 2; }
+.cannon { position: absolute; pointer-events: auto; padding: 6px; font-size: .7rem; background: #18354bea; }
+.cannon[aria-pressed="true"] { border: 2px solid #ffe18a; color: #ffe18a; }
+.top-left { top: 8px; left: 8px; }
+.top-right { top: 8px; right: 8px; }
+.bottom-left { bottom: 8px; left: 8px; }
+.bottom-right { bottom: 8px; right: 8px; }
+.navigation-controls { position: absolute; top: 114px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; align-items: center; gap: 4px; padding: 4px; background: #08172ecb; border-radius: 10px; }
+.navigation-controls button { padding: 5px; font-size: .65rem; touch-action: none; }
+#heading { min-width: 34px; text-align: center; font-size: .7rem; }
+.touch-controls { bottom: 115px; }
+@media (max-width: 500px) { .navigation-controls { top: auto; bottom: 62px; } .navigation-controls button { min-height: 38px; } }
 :fullscreen header { display: none; }
 :fullscreen main { height: 100dvh; }
 @media (max-height: 500px) {

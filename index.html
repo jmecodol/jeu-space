@@ -32,6 +32,19 @@
         Ce jeu nécessite un navigateur prenant en charge Canvas et JavaScript.
       </canvas>
       <div class="cockpit-frame" aria-hidden="true"><div class="cockpit-dashboard">GARDIENS • NAVIGATION / ARMEMENT</div></div>
+      <div class="cannon-controls" aria-label="Canons extérieurs du hublot">
+        <button data-cannon="0" class="cannon top-left" aria-pressed="true">↘ Canon 1</button>
+        <button data-cannon="1" class="cannon top-right" aria-pressed="false">Canon 2 ↙</button>
+        <button data-cannon="2" class="cannon bottom-left" aria-pressed="false">↗ Canon 3</button>
+        <button data-cannon="3" class="cannon bottom-right" aria-pressed="false">Canon 4 ↖</button>
+      </div>
+      <div class="navigation-controls" aria-label="Orientation du hublot">
+        <button data-turn="-1" aria-label="Tourner à gauche, maintenir">↶</button>
+        <output id="heading" aria-label="Angle du hublot">0°</output>
+        <button data-turn="1" aria-label="Tourner à droite, maintenir">↷</button>
+        <button id="center-view">Recentrer</button>
+        <button id="auto-fire" aria-pressed="false">Tir continu : arrêt</button>
+      </div>
       <p id="action-hint" class="action-hint">Pilotage • 1 doigt : position · 2e doigt : visée et tir</p>
       <div id="overlay" class="overlay">
         <div class="panel">
@@ -102,6 +115,7 @@
         <p><b>Création libre :</b> pas de vagues automatiques. Fabriquez les planètes, maisons et bases, accueillez des habitants, puis envoyez les menaces choisies vers un point touché. La perte du vaisseau ou du dernier monde termine la partie ; recommencez pour recréer une galaxie.</p>
         <p><b>Piloter :</b> flèches, WASD ou ZQSD. <b>Viser :</b> souris. <b>Tirer :</b> clic maintenu, Espace ou bouton TIR. Sur mobile : premier doigt dans l’espace pour placer le vaisseau et le déplacer, deuxième doigt pour viser et tirer automatiquement. Le relâchement du premier doigt arrête les tirs : reposez les deux doigts pour repartir. Les flèches tactiles restent disponibles. <b>Pause :</b> P, Échap ou bouton.</p>
         <p><b>Atelier :</b> choisissez une action puis touchez l’espace. Au clavier, focalisez l’espace, déplacez le viseur avec les flèches et validez avec Entrée. Pour revenir au vaisseau, choisissez « Piloter ». Les missiles du vaisseau frappent plus fort que les balles ; ni l’un ni l’autre ne blesse les planètes. Utilisez les menaces ou la destruction confirmée pour détruire un monde.</p>
+        <p><b>Canons :</b> choisissez un des quatre coins du hublot. Un clic ou glissement fixe l’objectif ; « Tir continu » tire vers lui après relâchement. <b>Tourner :</b> maintenez ↶ / ↷ ou Q / E, sans limite à 360°. Le compteur et les étoiles nommées servent de repères. Recentrer ramène le hublot à zéro. En cockpit, A déplace à gauche et Q tourne. Rotation 2D du hublot, pas caméra sphérique 3D.</p>
         <p><b>Menaces :</b> météorites lentes (roches), comètes rapides (traînées), monstres (tentacules), missiles guidés (triangles) et lasers (lignes roses annoncées en pointillés). Tous sont neutralisables, sauf les faisceaux : esquivez-les !</p>
         <p>Les monstres annoncent puis lancent leurs lasers. Les boucliers absorbent les attaques pendant 8 secondes. Chaque menace détruite rapporte des crédits et des points. Chaque vague achevée répare 15 points de coque et rapporte 25 crédits.</p>
         <p>Le sacrifice est facultatif et irréversible : il supprime tous les habitants et maisons, coûte 100 points et ne rapporte rien. Il ne peut pas être annulé après confirmation.</p>

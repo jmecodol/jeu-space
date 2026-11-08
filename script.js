@@ -19,13 +19,20 @@
   const aim = { x: W / 2, y: 0 };
   let firing = false, state = 'welcome', game, last = 0, uiClock = 0, confirmationPlanet = null;
   let bank = 0;
+  let cannon = 0, autoFire = false;
+  const turns = new Map();
+  const cannonPositions = [{ x: 55, y: 55 }, { x: W - 55, y: 55 }, { x: 55, y: H - 55 }, { x: W - 55, y: H - 55 }];
+  function toWorld(position) {
+    const dx = position.x - W / 2, dy = position.y - H / 2, angle = cockpit() ? bank : 0;
+    return { x: W / 2 + dx * Math.cos(angle) + dy * Math.sin(angle), y: H / 2 - dx * Math.sin(angle) + dy * Math.cos(angle) };
+  }
   const cockpit = () => $('view').value === 'cockpit';
   function closeConsole() {
     $('console').hidden = true; $('menu').setAttribute('aria-expanded', 'false');
   }
   function pilot() {
     clearInput(); $('tool').value = 'pilot'; closeConsole();
-    $('action-hint').textContent = 'Pilotage • 1 doigt : position · 2e doigt : visée et tir';
+    $('action-hint').textContent = 'Clic / glisser : fixer la cible · Canons aux 4 coins · ↶ ↷ ou Q / E : tourner';
     canvas.focus({ preventScroll: true });
   }
   let best = 0;
@@ -66,7 +73,7 @@
     };
     aim.x = W / 2; aim.y = 0;
     clearInput();
-    bank = 0; closeConsole();
+    bank = 0; cannon = 0; closeConsole(); syncCannons();
     $('tool').value = 'pilot';
     state = 'playing';
     $('overlay').hidden = true;
@@ -120,7 +127,10 @@
     $('losses').textContent = `Planètes perdues : ${game.lost} · Sacrifices : ${game.sacrifices} · Menaces neutralisées : ${game.kills}`;
   }
 
-  function clearInput() { keys.clear(); touches.clear(); fingers.clear(); firing = false; }
+  function clearInput() {
+    keys.clear(); touches.clear(); fingers.clear(); turns.clear(); firing = false; autoFire = false;
+    $('auto-fire').setAttribute('aria-pressed', 'false'); $('auto-fire').textContent = 'Tir continu : arrêt';
+  }
 
   function pause() {
     if ($('confirm').open || !['playing', 'paused'].includes(state)) return;
@@ -200,9 +210,10 @@
   }
 
   function shoot() {
-    const s = game.ship, angle = Math.atan2(aim.y - s.y, aim.x - s.x);
+    const s = game.ship, origin = cockpit() ? toWorld(cannonPositions[cannon]) : s;
+    const angle = Math.atan2(aim.y - origin.y, aim.x - origin.x);
     const missile = $('weapon').value === 'missile', speed = missile ? 300 : 470;
-    game.bullets.push({ x: s.x, y: s.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: missile ? 3 : 1.7, missile });
+    game.bullets.push({ x: origin.x, y: origin.y, vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed, life: 4, missile });
     s.cooldown = missile ? .55 : .16;
   }
 
@@ -211,14 +222,17 @@
     s.invincible = Math.max(0, s.invincible - dt);
     s.cooldown = Math.max(0, s.cooldown - dt);
     const moves = new Set(touches.values());
-    let dx = Number(keys.has('arrowright') || keys.has('d') || moves.has('right')) - Number(keys.has('arrowleft') || keys.has('a') || keys.has('q') || moves.has('left'));
+    let dx = Number(keys.has('arrowright') || keys.has('d') || moves.has('right')) - Number(keys.has('arrowleft') || keys.has('a') || (!cockpit() && keys.has('q')) || moves.has('left'));
     let dy = Number(keys.has('arrowdown') || keys.has('s') || moves.has('down')) - Number(keys.has('arrowup') || keys.has('w') || keys.has('z') || moves.has('up'));
     const norm = Math.hypot(dx, dy) || 1;
     s.x = Math.max(16, Math.min(W - 16, s.x + dx / norm * 225 * dt));
     s.y = Math.max(16, Math.min(H - 16, s.y + dy / norm * 225 * dt));
-    if (!reducedMotion && cockpit()) bank += ((dx / norm * -.06) - bank) * Math.min(1, dt * 6);
-    else bank = 0;
-    if ($('tool').value === 'pilot' && (firing || [...fingers.values()].includes('aim') || keys.has(' ') || moves.has('fire')) && s.cooldown <= 0) shoot();
+    if (cockpit() && $('tool').value === 'pilot') {
+      const turn = Math.max(-1, Math.min(1, [...turns.values()].reduce((sum, value) => sum + value, 0) + Number(keys.has('e')) - Number(keys.has('q'))));
+      bank = ((bank + turn * dt * (reducedMotion ? .45 : .9)) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+    }
+    $('heading').textContent = `${Math.round(bank * 180 / Math.PI) % 360}°`;
+    if ($('tool').value === 'pilot' && (autoFire || firing || [...fingers.values()].includes('aim') || keys.has(' ') || moves.has('fire')) && s.cooldown <= 0) shoot();
     for (const p of living()) {
       p.shield = Math.max(0, p.shield - dt);
       p.growth += dt;
@@ -239,7 +253,7 @@
         }
       }
     }
-    game.bullets = game.bullets.filter(b => b.life > 0 && b.x > -10 && b.x < W + 10 && b.y > -10 && b.y < H + 10);
+    game.bullets = game.bullets.filter(b => b.life > 0);
     for (const e of game.enemies) {
       if (e.hp <= 0) continue;
       if (e.target !== s && e.target.hp <= 0) e.target = living()[0] || s;
@@ -295,6 +309,14 @@
     if (cockpit()) { ctx.translate(W / 2, H / 2); ctx.rotate(bank); ctx.translate(-W / 2, -H / 2); }
     ctx.fillStyle = '#9cb8d0';
     for (const star of stars) { ctx.beginPath(); ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2); ctx.fill(); }
+    ctx.font = '15px system-ui'; ctx.textAlign = 'center';
+    for (let i = 0; i < 8; i++) {
+      const angle = i * Math.PI / 4;
+      const x = W / 2 + Math.cos(angle) * 255, y = H / 2 + Math.sin(angle) * 255;
+      ctx.fillStyle = ['#ffe18a', '#9ddeff', '#ffb8d2', '#a0e9d5'][i % 4];
+      ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.fillText(`Étoile ${i + 1} · ${i * 45}°`, x, y - 12);
+    }
     if (!game) { ctx.restore(); return; }
     for (const p of living()) {
       const atmosphere = ctx.createRadialGradient(p.x, p.y, p.radius * .85, p.x, p.y, p.radius + 22);
@@ -404,6 +426,16 @@
       ctx.fillText('Vague repoussée · Préparez vos colonies', W / 2, 55);
     }
     ctx.restore();
+    if (cockpit()) {
+      const targetX = W / 2 + (aim.x - W / 2) * Math.cos(bank) - (aim.y - H / 2) * Math.sin(bank);
+      const targetY = H / 2 + (aim.x - W / 2) * Math.sin(bank) + (aim.y - H / 2) * Math.cos(bank);
+      cannonPositions.forEach((origin, index) => {
+        ctx.save(); ctx.translate(origin.x, origin.y); ctx.rotate(Math.atan2(targetY - origin.y, targetX - origin.x));
+        ctx.fillStyle = index === cannon ? '#ffe18a' : '#93afc4';
+        ctx.fillRect(-12, -8, 24, 16); ctx.fillRect(0, -4, 28, 8);
+        ctx.fillStyle = '#122639'; ctx.fillRect(20, -3, 8, 6); ctx.restore();
+      });
+    }
   }
 
   function frame(time) {
@@ -418,6 +450,33 @@
 
   $('start').addEventListener('click', () => { if (state === 'paused') pause(); else reset(); });
   $('pause').addEventListener('click', pause);
+  function syncCannons() {
+    document.querySelectorAll('[data-cannon]').forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.cannon) === cannon)));
+  }
+  document.querySelectorAll('[data-cannon]').forEach(button => {
+    button.addEventListener('click', () => {
+      cannon = Number(button.dataset.cannon); syncCannons();
+      tell(`Canon ${cannon + 1} sélectionné. Fixez la cible puis activez le tir.`);
+    });
+  });
+  $('auto-fire').addEventListener('click', () => {
+    if (state !== 'playing' || $('tool').value !== 'pilot') return;
+    autoFire = !autoFire;
+    $('auto-fire').setAttribute('aria-pressed', String(autoFire));
+    $('auto-fire').textContent = `Tir continu : ${autoFire ? 'actif' : 'arrêt'}`;
+  });
+  document.querySelectorAll('[data-turn]').forEach(button => {
+    button.addEventListener('pointerdown', event => {
+      if (state !== 'playing') return;
+      event.preventDefault(); button.setPointerCapture(event.pointerId);
+      turns.set(event.pointerId, Number(button.dataset.turn));
+    });
+    for (const name of ['pointerup', 'pointercancel', 'lostpointercapture']) button.addEventListener(name, event => turns.delete(event.pointerId));
+    button.addEventListener('click', event => {
+      if (event.detail === 0 && state === 'playing') bank = (bank + Number(button.dataset.turn) * Math.PI / 12 + Math.PI * 2) % (Math.PI * 2);
+    });
+  });
+  $('center-view').addEventListener('click', () => { bank = 0; turns.clear(); });
   $('pilot').addEventListener('click', () => { if (state === 'paused') pause(); else pilot(); });
   $('menu').addEventListener('click', () => {
     const open = $('console').hidden;
@@ -479,13 +538,7 @@
   });
   function point(event) {
     const rect = canvas.getBoundingClientRect();
-    let x = (event.clientX - rect.left) / rect.width * W, y = (event.clientY - rect.top) / rect.height * H;
-    if (cockpit()) {
-      const dx = x - W / 2, dy = y - H / 2;
-      x = W / 2 + dx * Math.cos(bank) + dy * Math.sin(bank);
-      y = H / 2 - dx * Math.sin(bank) + dy * Math.cos(bank);
-    }
-    return { x: Math.max(0, Math.min(W, x)), y: Math.max(0, Math.min(H, y)) };
+    return toWorld({ x: Math.max(0, Math.min(W, (event.clientX - rect.left) / rect.width * W)), y: Math.max(0, Math.min(H, (event.clientY - rect.top) / rect.height * H)) });
   }
   function launch(target) {
     if (!creative() || state !== 'playing') { tell('Les menaces personnalisées sont disponibles en mode Création libre.'); return; }
@@ -500,7 +553,7 @@
   }
   $('target-attack').addEventListener('click', () => { if (selected().hp > 0) launch(selected()); });
   function chooseTool() {
-    clearInput(); bank = 0; closeConsole();
+    clearInput(); closeConsole();
     $('action-hint').textContent = $('tool').value === 'pilot' ? 'Pilotage • 1 doigt : position · 2e doigt : visée et tir' : `${$('tool').selectedOptions[0].textContent} • Touchez la carte · Piloter pour annuler`;
     canvas.focus({ preventScroll: true });
   }
@@ -554,11 +607,9 @@
   function moveFinger(event) {
     const position = point(event), role = fingers.get(event.pointerId);
     if (role === 'ship') {
-      const oldX = game.ship.x;
       game.ship.x = Math.max(20, Math.min(W - 20, position.x));
       game.ship.y = Math.max(20, Math.min(H - 20, position.y - 28));
-      if (!reducedMotion && cockpit()) bank = Math.max(-.06, Math.min(.06, (oldX - game.ship.x) * .002));
-    } else if (role === 'aim' || event.pointerType === 'mouse') Object.assign(aim, position);
+    } else if (role === 'aim' || (event.pointerType === 'mouse' && firing)) Object.assign(aim, position);
   }
   canvas.addEventListener('pointermove', event => { if (state === 'playing' && $('tool').value === 'pilot') moveFinger(event); });
   canvas.addEventListener('pointerdown', event => {
@@ -605,7 +656,7 @@
       }
       return;
     }
-    if (state === 'playing' && ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', 'z', 'q', ' '].includes(key)) { event.preventDefault(); keys.add(key); }
+    if (state === 'playing' && ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', 'z', 'q', 'e', ' '].includes(key)) { event.preventDefault(); keys.add(key); }
   });
   document.addEventListener('keyup', event => keys.delete(event.key.toLowerCase()));
   window.addEventListener('blur', clearInput);
