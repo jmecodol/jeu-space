@@ -18,6 +18,16 @@
   };
   const aim = { x: W / 2, y: 0 };
   let firing = false, state = 'welcome', game, last = 0, uiClock = 0, confirmationPlanet = null;
+  let bank = 0;
+  const cockpit = () => $('view').value === 'cockpit';
+  function closeConsole() {
+    $('console').hidden = true; $('menu').setAttribute('aria-expanded', 'false');
+  }
+  function pilot() {
+    clearInput(); $('tool').value = 'pilot'; closeConsole();
+    $('action-hint').textContent = 'Pilotage • 1 doigt : position · 2e doigt : visée et tir';
+    canvas.focus({ preventScroll: true });
+  }
   let best = 0;
   try { best = Number(localStorage.getItem('gardiens-record')) || 0; } catch { /* Le stockage est facultatif. */ }
   $('best').textContent = best;
@@ -56,6 +66,7 @@
     };
     aim.x = W / 2; aim.y = 0;
     clearInput();
+    bank = 0; closeConsole();
     $('tool').value = 'pilot';
     state = 'playing';
     $('overlay').hidden = true;
@@ -120,6 +131,7 @@
     $('overlay-text').textContent = 'La galaxie vous attend. Aucune attaque ni croissance pendant la pause.';
     $('start').textContent = 'Reprendre';
     $('pause').textContent = state === 'paused' ? 'Reprendre (P)' : 'Pause (P)';
+    if (state === 'playing') pilot();
     updateUI();
   }
 
@@ -204,6 +216,8 @@
     const norm = Math.hypot(dx, dy) || 1;
     s.x = Math.max(16, Math.min(W - 16, s.x + dx / norm * 225 * dt));
     s.y = Math.max(16, Math.min(H - 16, s.y + dy / norm * 225 * dt));
+    if (!reducedMotion && cockpit()) bank += ((dx / norm * -.06) - bank) * Math.min(1, dt * 6);
+    else bank = 0;
     if ($('tool').value === 'pilot' && (firing || [...fingers.values()].includes('aim') || keys.has(' ') || moves.has('fire')) && s.cooldown <= 0) shoot();
     for (const p of living()) {
       p.shield = Math.max(0, p.shield - dt);
@@ -277,9 +291,11 @@
 
   function draw() {
     ctx.fillStyle = '#060c1c'; ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    if (cockpit()) { ctx.translate(W / 2, H / 2); ctx.rotate(bank); ctx.translate(-W / 2, -H / 2); }
     ctx.fillStyle = '#9cb8d0';
     for (const star of stars) { ctx.beginPath(); ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2); ctx.fill(); }
-    if (!game) return;
+    if (!game) { ctx.restore(); return; }
     for (const p of living()) {
       const atmosphere = ctx.createRadialGradient(p.x, p.y, p.radius * .85, p.x, p.y, p.radius + 22);
       atmosphere.addColorStop(0, p.color + '88'); atmosphere.addColorStop(1, p.color + '00');
@@ -350,6 +366,7 @@
     }
     const s = game.ship;
     if (s.hp > 0) {
+      if (!cockpit()) {
       ctx.save(); ctx.translate(s.x, s.y); ctx.rotate(Math.atan2(aim.y - s.y, aim.x - s.x));
       ctx.fillStyle = '#7b9fb8';
       ctx.beginPath(); ctx.moveTo(12, 0); ctx.lineTo(-17, -24); ctx.lineTo(-23, -23); ctx.lineTo(-13, 0); ctx.lineTo(-23, 23); ctx.lineTo(-17, 24); ctx.closePath(); ctx.fill();
@@ -358,6 +375,11 @@
       ctx.fillStyle = '#25475f'; ctx.fillRect(-19, -21, 13, 5); ctx.fillRect(-19, 16, 13, 5);
       ctx.fillStyle = '#75e7ff'; ctx.beginPath(); ctx.ellipse(8, 0, 8, 4, 0, 0, Math.PI * 2); ctx.fill();
       ctx.fillStyle = '#ffbd78'; ctx.beginPath(); ctx.moveTo(-20, -5); ctx.lineTo(-32, 0); ctx.lineTo(-20, 5); ctx.fill(); ctx.restore();
+      } else {
+        ctx.strokeStyle = '#89dce3'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(s.x, s.y, 10, 0, Math.PI * 2); ctx.stroke();
+        ctx.font = '12px system-ui'; ctx.fillStyle = '#c1f7ff'; ctx.textAlign = 'center'; ctx.fillText('NAV', s.x, s.y + 24);
+      }
       ctx.strokeStyle = '#ffe18a'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.arc(aim.x, aim.y, 12, 0, Math.PI * 2);
       ctx.moveTo(aim.x - 20, aim.y); ctx.lineTo(aim.x - 7, aim.y);
@@ -381,6 +403,7 @@
       ctx.fillStyle = '#eef5ff'; ctx.font = '22px system-ui'; ctx.textAlign = 'center';
       ctx.fillText('Vague repoussée · Préparez vos colonies', W / 2, 55);
     }
+    ctx.restore();
   }
 
   function frame(time) {
@@ -395,6 +418,28 @@
 
   $('start').addEventListener('click', () => { if (state === 'paused') pause(); else reset(); });
   $('pause').addEventListener('click', pause);
+  $('pilot').addEventListener('click', () => { if (state === 'paused') pause(); else pilot(); });
+  $('menu').addEventListener('click', () => {
+    const open = $('console').hidden;
+    clearInput(); $('console').hidden = !open; $('menu').setAttribute('aria-expanded', String(open));
+    if (open) $('close-menu').focus({ preventScroll: true });
+    else canvas.focus({ preventScroll: true });
+  });
+  $('close-menu').addEventListener('click', () => { closeConsole(); canvas.focus({ preventScroll: true }); });
+  $('view').addEventListener('change', () => {
+    bank = 0; document.querySelector('.arena').classList.toggle('external-view', !cockpit());
+  });
+  $('fullscreen').addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+      else { tell('Plein écran natif indisponible : le jeu occupe déjà la fenêtre.'); return; }
+    } catch { tell('Le navigateur a refusé le plein écran. Le jeu reste utilisable dans la fenêtre.'); }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    $('fullscreen').textContent = document.fullscreenElement ? 'Quitter plein écran' : 'Plein écran';
+    clearInput();
+  });
   $('build').addEventListener('click', () => {
     const p = selected();
     if (state !== 'playing' || p.hp <= 0 || p.houses >= 8) return;
@@ -434,24 +479,63 @@
   });
   function point(event) {
     const rect = canvas.getBoundingClientRect();
-    return { x: Math.max(0, Math.min(W, (event.clientX - rect.left) / rect.width * W)), y: Math.max(0, Math.min(H, (event.clientY - rect.top) / rect.height * H)) };
+    let x = (event.clientX - rect.left) / rect.width * W, y = (event.clientY - rect.top) / rect.height * H;
+    if (cockpit()) {
+      const dx = x - W / 2, dy = y - H / 2;
+      x = W / 2 + dx * Math.cos(bank) + dy * Math.sin(bank);
+      y = H / 2 - dx * Math.sin(bank) + dy * Math.cos(bank);
+    }
+    return { x: Math.max(0, Math.min(W, x)), y: Math.max(0, Math.min(H, y)) };
   }
   function launch(target) {
     if (!creative() || state !== 'playing') { tell('Les menaces personnalisées sont disponibles en mode Création libre.'); return; }
     if (game.enemies.length >= 60) { tell('Limite de 60 menaces atteinte.'); return; }
     const kind = $('threat').value;
-    game.enemies.push({ ...kinds[kind], kind, x: Math.max(20, Math.min(W - 20, target.x - 180)), y: -30, target: { x: target.x, y: target.y }, fixed: true, attack: 4, angle: 0 });
+    const creature = kind === 'monster' || kind === 'swarm';
+    const destination = creature ? living().reduce((nearest, p) => distance(p, target) < distance(nearest, target) ? p : nearest, game.ship) : { x: target.x, y: target.y };
+    game.enemies.push({ ...kinds[kind], kind, x: creature ? target.x : Math.max(20, Math.min(W - 20, target.x - 180)), y: creature ? target.y : -30, target: destination, fixed: !creature, attack: 4, angle: 0 });
     effect(target.x, target.y, '#ffb785', 20);
-    tell(`${kinds[kind].label} en route vers la cible !`);
+    tell(creature ? `${kinds[kind].label} apparu au point choisi !` : `${kinds[kind].label} en route vers la cible !`);
+    return true;
   }
   $('target-attack').addEventListener('click', () => { if (selected().hp > 0) launch(selected()); });
-  $('tool').addEventListener('change', () => { clearInput(); tell('Action changée. Touchez l’espace pour l’utiliser.'); });
+  function chooseTool() {
+    clearInput(); bank = 0; closeConsole();
+    $('action-hint').textContent = $('tool').value === 'pilot' ? 'Pilotage • 1 doigt : position · 2e doigt : visée et tir' : `${$('tool').selectedOptions[0].textContent} • Touchez la carte · Piloter pour annuler`;
+    canvas.focus({ preventScroll: true });
+  }
+  $('tool').addEventListener('change', chooseTool);
+  const drawings = {
+    meteor: '<circle cx="35" cy="24" r="17" fill="#c5af91"/><circle cx="30" cy="18" r="5" fill="#796857"/><circle cx="42" cy="30" r="4" fill="#796857"/>',
+    heavy: '<path d="M15 12L42 4 61 19 52 40 24 44 8 29Z" fill="#ad9379"/><circle cx="32" cy="24" r="8" fill="#6a594c"/>',
+    comet: '<path d="M42 10L2 24 42 38Z" fill="#75dfff"/><circle cx="48" cy="24" r="13" fill="#dbf9ff"/>',
+    monster: '<path d="M25 12Q3 2 13 26T8 42M28 32Q10 48 7 33" stroke="#c5a0ff" stroke-width="5" fill="none"/><ellipse cx="42" cy="24" rx="21" ry="17" fill="#c5a0ff"/><circle cx="45" cy="19" r="4" fill="#15102b"/><circle cx="55" cy="24" r="4" fill="#15102b"/>',
+    swarm: '<path d="M17 12L8 5M17 35L7 43M55 12L65 5M55 35L65 43" stroke="#ffb8d2" stroke-width="4"/><ellipse cx="36" cy="24" rx="24" ry="17" fill="#ffb8d2"/><path d="M36 7V41" stroke="#7b4965" stroke-width="3"/><circle cx="46" cy="20" r="3" fill="#101c32"/>',
+    missile: '<path d="M5 17L20 24 5 31Z" fill="#ffba6b"/><path d="M20 17H49L67 24 49 31H20Z" fill="#dbeaf7"/><path d="M26 17L19 8H36L42 17M26 31L19 40H36L42 31" fill="#7bb6d2"/>'
+  };
+  for (const [kind, drawing] of Object.entries(drawings)) {
+    const button = document.createElement('button');
+    button.innerHTML = `<svg viewBox="0 0 72 48" aria-hidden="true">${drawing}</svg>`;
+    button.append(document.createTextNode(kinds[kind].label));
+    button.setAttribute('aria-pressed', String($('threat').value === kind));
+    button.dataset.kind = kind;
+    button.addEventListener('click', () => {
+      if (state !== 'playing') { tell('Démarrez ou reprenez la partie pour placer une menace.'); return; }
+      if (!creative()) { tell('Les menaces personnalisées nécessitent le mode Création libre.'); return; }
+      $('threat').value = kind; $('tool').value = 'attack'; syncGallery(); chooseTool();
+    });
+    $('threat-gallery').append(button);
+  }
+  function syncGallery() {
+    for (const button of $('threat-gallery').children) button.setAttribute('aria-pressed', String(button.dataset.kind === $('threat').value));
+  }
+  $('threat').addEventListener('change', syncGallery);
   function spaceAction(position) {
     const tool = $('tool').value;
-    if (tool === 'attack') { launch(position); return; }
+    if (tool === 'attack') { if (launch(position)) pilot(); return; }
     if (tool === 'select') {
       const i = game.planets.findIndex(p => p.hp > 0 && distance(p, position) < p.radius + 22);
-      if (i >= 0) { game.selected = i; updateUI(); } else tell('Touchez une planète pour la sélectionner.');
+      if (i >= 0) { game.selected = i; updateUI(); pilot(); } else tell('Touchez une planète pour la sélectionner.');
       return;
     }
     if (tool !== 'planet') return;
@@ -465,12 +549,15 @@
     if (reuse >= 0) { game.planets[reuse] = p; game.selected = reuse; }
     else { game.planets.push(p); game.selected = game.planets.length - 1; }
     makePlanetButtons(); updateUI(); effect(p.x, p.y, p.color, 80); tell(`${p.name} créée ! Construisez des maisons ou une base, puis accueillez des habitants.`);
+    pilot();
   }
   function moveFinger(event) {
     const position = point(event), role = fingers.get(event.pointerId);
     if (role === 'ship') {
+      const oldX = game.ship.x;
       game.ship.x = Math.max(20, Math.min(W - 20, position.x));
       game.ship.y = Math.max(20, Math.min(H - 20, position.y - 28));
+      if (!reducedMotion && cockpit()) bank = Math.max(-.06, Math.min(.06, (oldX - game.ship.x) * .002));
     } else if (role === 'aim' || event.pointerType === 'mouse') Object.assign(aim, position);
   }
   canvas.addEventListener('pointermove', event => { if (state === 'playing' && $('tool').value === 'pilot') moveFinger(event); });
@@ -521,7 +608,7 @@
     if (state === 'playing' && ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd', 'z', 'q', ' '].includes(key)) { event.preventDefault(); keys.add(key); }
   });
   document.addEventListener('keyup', event => keys.delete(event.key.toLowerCase()));
-  window.addEventListener('blur', () => { clearInput(); if (state === 'playing') pause(); });
+  window.addEventListener('blur', clearInput);
   document.addEventListener('visibilitychange', () => { if (document.hidden) { clearInput(); if (state === 'playing') pause(); } });
   reset();
   state = 'welcome'; clearInput(); $('overlay').hidden = false; $('pause').disabled = true; updateUI();

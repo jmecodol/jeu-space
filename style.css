@@ -76,3 +76,44 @@ dialog::backdrop { background: #020716d9; }
   .planet-list { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+
+/* La console et les commandes font partie de la zone de jeu, même en plein écran. */
+body { overflow: hidden; }
+header { height: 66px; padding: 10px 18px; }
+header h1 { font-size: 1.2rem; }
+main { display: block; height: calc(100dvh - 66px); max-width: none; padding: 0; }
+footer { display: none; }
+.arena { height: 100%; border-radius: 0; border: 0; }
+canvas { position: absolute; inset: 110px 0 60px; width: 100%; height: calc(100% - 170px); aspect-ratio: auto; }
+.game-toolbar { display: flex; justify-content: center; gap: 6px; height: 50px; padding: 3px; background: #102037; position: relative; z-index: 4; }
+.game-toolbar button { font-size: .8rem; padding: 6px 10px; }
+.hud { height: 60px; position: relative; z-index: 3; }
+.hud strong { margin-top: 0; }
+.overlay { inset: 110px 0 0; z-index: 6; }
+.panel { max-height: 100%; overflow-y: auto; }
+#console { position: absolute; z-index: 5; top: 110px; right: 10px; bottom: 65px; width: min(360px, calc(100% - 20px)); overflow-y: auto; overscroll-behavior: contain; background: #101d32f5; border: 1px solid #7297b8; box-shadow: 0 10px 30px #0009; padding: 14px; }
+#console[hidden] { display: none; }
+#close-menu { width: 100%; margin-bottom: 12px; }
+.planet-list { grid-template-columns: 1fr; max-height: 200px; overflow-y: auto; }
+.touch-controls { position: absolute; left: 10px; right: 10px; bottom: 65px; background: transparent; padding: 0; pointer-events: none; z-index: 2; }
+.touch-controls button { pointer-events: auto; background: #152e47cc; }
+.touch-hint { display: none; }
+.cockpit-frame { position: absolute; inset: 110px 0 0; pointer-events: none; border-left: clamp(8px, 3vw, 36px) solid #243c51; border-right: clamp(8px, 3vw, 36px) solid #243c51; border-top: 8px solid #4d687c; box-shadow: inset 0 0 18px #65bad555; z-index: 1; }
+.cockpit-frame::before, .cockpit-frame::after { content: ''; position: absolute; top: 0; width: 8px; height: 25%; background: #456277; }
+.cockpit-frame::before { left: 8%; transform: rotate(-25deg); }
+.cockpit-frame::after { right: 8%; transform: rotate(25deg); }
+.cockpit-dashboard { position: absolute; bottom: 0; left: 0; right: 0; height: 60px; border-top: 5px solid #56728a; background: linear-gradient(#243b51, #081322); text-align: center; padding: 18px 4px; font-size: .65rem; letter-spacing: .12em; color: #a8e6f5; }
+.external-view .cockpit-frame { display: none; }
+.action-hint { position: absolute; left: 50%; transform: translateX(-50%); bottom: 6px; z-index: 3; margin: 0; max-width: 90%; width: max-content; background: #08172eea; color: #dcf6ff; border-radius: 8px; padding: 8px 10px; font-size: .75rem; text-align: center; pointer-events: none; }
+.threat-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-bottom: 12px; }
+.threat-gallery button { padding: 5px; font-size: .75rem; }
+.threat-gallery svg { display: block; margin: auto; width: 72px; height: 48px; }
+.threat-gallery button[aria-pressed="true"] { border: 2px solid #ffe18a; background: #344959; }
+:fullscreen header { display: none; }
+:fullscreen main { height: 100dvh; }
+@media (max-height: 500px) {
+  header { display: none; }
+  main { height: 100dvh; }
+  .panel { padding: 10px; }
+  .panel .eyebrow { display: none; }
+}

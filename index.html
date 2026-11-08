@@ -12,10 +12,15 @@
 <body>
   <header>
     <div><span class="eyebrow">MISSION • SECTEUR 07</span><h1>Gardiens des planètes</h1></div>
-    <button id="pause" disabled>Pause (P)</button>
   </header>
   <main>
     <section class="arena" aria-label="Zone de jeu">
+      <nav class="game-toolbar" aria-label="Commandes du cockpit">
+        <button id="pilot">Piloter</button>
+        <button id="menu" aria-expanded="false" aria-controls="console">☰ Console</button>
+        <button id="fullscreen">Plein écran</button>
+        <button id="pause" disabled>Pause (P)</button>
+      </nav>
       <div class="hud" aria-label="Statistiques de la mission">
         <span>Score <strong id="score">0</strong></span>
         <span>Vague <strong id="wave">1 / 6</strong></span>
@@ -26,6 +31,8 @@
       <canvas id="space" width="1000" height="650" tabindex="0" aria-label="Espace de jeu. Premier doigt : placer et déplacer le vaisseau. Second doigt : viser et tirer. Sur ordinateur : flèches ou WASD, souris et clic. Atelier : choisir une action puis toucher l’espace ; au clavier, flèches pour placer le viseur puis Entrée.">
         Ce jeu nécessite un navigateur prenant en charge Canvas et JavaScript.
       </canvas>
+      <div class="cockpit-frame" aria-hidden="true"><div class="cockpit-dashboard">GARDIENS • NAVIGATION / ARMEMENT</div></div>
+      <p id="action-hint" class="action-hint">Pilotage • 1 doigt : position · 2e doigt : visée et tir</p>
       <div id="overlay" class="overlay">
         <div class="panel">
           <span class="eyebrow">PROTÉGER • BÂTIR • SURVIVRE</span>
@@ -45,10 +52,12 @@
         </div>
         <div><span class="touch-hint">1 doigt : vaisseau<br>2e doigt : visée + tir</span><button id="fire" aria-label="Tirer, maintenir pour tir continu">TIR ◎</button></div>
       </div>
-    </section>
-    <aside aria-label="Gestion des colonies">
+    <aside id="console" aria-label="Console du vaisseau" hidden>
+      <button id="close-menu">Fermer la console ✕</button>
       <details class="toolbox" open>
         <summary>Atelier de la galaxie</summary>
+        <label for="view">Caméra</label>
+        <select id="view"><option value="cockpit">Depuis le cockpit</option><option value="external">Vue extérieure</option></select>
         <label for="weapon">Arme du vaisseau</label>
         <select id="weapon"><option value="bullet">Balles rapides</option><option value="missile">Missiles explosifs</option></select>
         <label for="tool">Action dans l’espace</label>
@@ -58,6 +67,7 @@
           <option value="planet">Créer une planète au toucher</option>
           <option value="attack">Lancer une menace vers le point touché</option>
         </select>
+        <div id="threat-gallery" class="threat-gallery" aria-label="Choisir une menace par son image"></div>
         <label for="threat">Menace à lancer</label>
         <select id="threat">
           <option value="meteor">Météorite rocheuse</option>
@@ -98,6 +108,7 @@
       </details>
       <p class="muted" id="losses">Planètes perdues : 0 · Sacrifices : 0 · Menaces neutralisées : 0</p>
     </aside>
+    </section>
   </main>
   <dialog id="confirm">
     <form method="dialog">

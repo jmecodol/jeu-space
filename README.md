@@ -4,6 +4,15 @@ Jeu spatial 2D en français, autonome, sans framework, compilation, backend ni r
 
 ## Jouer
 
+### Cockpit, console intégrée et retour au pilotage
+
+- La zone de jeu occupe la fenêtre sans menus placés sous la carte. **Console** ouvre un panneau superposé défilant ; **Fermer** le referme. Les commandes restent dans l’écran, sur ordinateur, téléphone et tablette.
+- **Plein écran** utilise le mode natif si le navigateur l’autorise ; sinon le jeu reste dans sa fenêtre. Le bouton permet aussi d’en sortir. Échap peut quitter le plein écran avant d’agir sur la pause, selon le navigateur.
+- La caméra **Depuis le cockpit** ajoute une vitre, un tableau de bord et une légère inclinaison du paysage lors des mouvements latéraux. Le repère **NAV** indique votre position sur la carte et les collisions y sont calculées. C’est une vue cockpit stylisée sur une carte 2D, pas un monde 3D en perspective. La **Vue extérieure** reste disponible dans la console. La réduction des animations désactive les inclinaisons.
+- Les six menaces ont des vignettes dessinées localement : choisissez l’image, puis touchez la carte. Les monstres apparaissent au point choisi et attaquent la cible la plus proche ; météorites, comètes et missiles arrivent depuis le bord supérieur vers le point. Le panneau se ferme pour libérer la visée.
+- Une création de planète, une sélection ou un lancement réussi revient automatiquement au pilotage. **Piloter** permet d’annuler un outil en attente et de reprendre une partie en pause. **Reprendre** rend aussi le focus à la carte et rétablit le pilotage.
+- L’ouverture d’un sélecteur natif n’entraîne plus une pause sur simple perte de focus ; les touches et doigts actifs sont effacés pour éviter les commandes bloquées. Passer réellement à un autre onglet ou masquer la page continue à mettre en pause.
+
 ### Nouveau : atelier et pilotage à deux doigts
 
 Le mode **Création libre**, sélectionné à l’accueil par défaut, n’impose aucune vague automatique : vous contrôlez la galaxie. Le mode **Défense** conserve les six vagues et les coûts décrits plus bas.
