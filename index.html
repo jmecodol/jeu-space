@@ -23,14 +23,16 @@
         <span>Crédits <strong id="credits">60</strong></span>
         <span>Record <strong id="best">0</strong></span>
       </div>
-      <canvas id="space" width="1000" height="650" tabindex="0" aria-label="Espace de jeu. Pilotez avec les flèches ou WASD, visez avec la souris et tirez avec le clic ou Espace. Sélectionnez une planète avec les boutons de colonies.">
+      <canvas id="space" width="1000" height="650" tabindex="0" aria-label="Espace de jeu. Premier doigt : placer et déplacer le vaisseau. Second doigt : viser et tirer. Sur ordinateur : flèches ou WASD, souris et clic. Atelier : choisir une action puis toucher l’espace ; au clavier, flèches pour placer le viseur puis Entrée.">
         Ce jeu nécessite un navigateur prenant en charge Canvas et JavaScript.
       </canvas>
       <div id="overlay" class="overlay">
         <div class="panel">
           <span class="eyebrow">PROTÉGER • BÂTIR • SURVIVRE</span>
           <h2 id="overlay-title">La galaxie compte sur vous</h2>
-          <p id="overlay-text">Défendez trois colonies pendant six vagues. Éliminez les menaces, construisez des maisons et accueillez de nouveaux habitants.</p>
+          <p id="overlay-text">Créez votre galaxie, peuplez ses mondes et dirigez les attaques. Sur écran tactile : premier doigt pour déplacer le vaisseau, second doigt pour viser et tirer.</p>
+          <label for="mode">Mode de jeu</label>
+          <select id="mode"><option value="creative">Création libre — vous contrôlez les menaces</option><option value="mission">Défense — six vagues automatiques</option></select>
           <button id="start" class="primary">Commencer la mission</button>
         </div>
       </div>
@@ -41,10 +43,33 @@
           <button data-move="down" aria-label="Descendre">▼</button>
           <button data-move="right" aria-label="Aller à droite">▶</button>
         </div>
-        <div><span class="touch-hint">Touchez l’espace pour viser</span><button id="fire" aria-label="Tirer, maintenir pour tir continu">TIR ◎</button></div>
+        <div><span class="touch-hint">1 doigt : vaisseau<br>2e doigt : visée + tir</span><button id="fire" aria-label="Tirer, maintenir pour tir continu">TIR ◎</button></div>
       </div>
     </section>
     <aside aria-label="Gestion des colonies">
+      <details class="toolbox" open>
+        <summary>Atelier de la galaxie</summary>
+        <label for="weapon">Arme du vaisseau</label>
+        <select id="weapon"><option value="bullet">Balles rapides</option><option value="missile">Missiles explosifs</option></select>
+        <label for="tool">Action dans l’espace</label>
+        <select id="tool">
+          <option value="pilot">Piloter / viser et tirer</option>
+          <option value="select">Sélectionner une planète</option>
+          <option value="planet">Créer une planète au toucher</option>
+          <option value="attack">Lancer une menace vers le point touché</option>
+        </select>
+        <label for="threat">Menace à lancer</label>
+        <select id="threat">
+          <option value="meteor">Météorite rocheuse</option>
+          <option value="heavy">Astéroïde géant</option>
+          <option value="comet">Comète de glace</option>
+          <option value="monster">Monstre à tentacules</option>
+          <option value="swarm">Monstre à carapace</option>
+          <option value="missile">Missile guidé</option>
+        </select>
+        <p class="muted">En création, bâtiments et habitants sont gratuits. Choisissez une action puis touchez l’espace. Les menaces partent du bord supérieur vers votre cible ; leurs explosions peuvent détruire les colonies.</p>
+        <button id="target-attack">Envoyer vers la planète sélectionnée</button>
+      </details>
       <span class="eyebrow">VOS MONDES</span>
       <h2>Conseil des colonies</h2>
       <div id="planets" class="planet-list" aria-label="Sélection de planète"></div>
@@ -52,15 +77,21 @@
         <h3 id="selected-name">Colonie sélectionnée</h3>
         <p id="selected-info"></p>
         <button id="build" class="primary" disabled>Construire une maison · 30 crédits</button>
+        <button id="base" disabled>Construire une base · 60 crédits</button>
+        <label for="species">Habitants à accueillir</label>
+        <select id="species"><option value="dancers">Danseurs à deux pieds</option><option value="hats">Extraterrestres à chapeaux pointus</option><option value="glow">Peuple lumineux</option></select>
+        <button id="settle" disabled>Accueillir 5 habitants · 10 crédits</button>
         <button id="protect" disabled>Protéger · bouclier 8 s · 20 crédits</button>
         <button id="sacrifice" class="danger" disabled>Détruire volontairement cette planète</button>
-        <p class="muted">Une maison accueille jusqu’à 5 habitants : +1 toutes les 4 secondes. Maximum 8 maisons par planète. Une attaque détruit une maison et fait perdre jusqu’à 3 habitants.</p>
+        <p class="muted">Une maison accueille 5 habitants, une base 15. Croissance : +1 toutes les 4 secondes. Maximum : 8 maisons et 3 bases. Les attaques réduisent la population et détruisent les bâtiments ; pas de gore.</p>
       </section>
       <p id="notice" role="status" aria-live="polite">Prêt pour le décollage.</p>
       <details>
         <summary>Règles et commandes</summary>
         <p>Survivez à 6 vagues avec au moins une colonie. Défaite si la coque atteint zéro ou si toutes les colonies disparaissent. Les tirs alliés ne touchent jamais les planètes.</p>
-        <p><b>Piloter :</b> flèches, WASD ou ZQSD. <b>Viser :</b> souris ou toucher l’espace. <b>Tirer :</b> clic maintenu, Espace ou bouton TIR. Sur mobile, maintenez les flèches tactiles. <b>Pause :</b> P, Échap ou bouton.</p>
+        <p><b>Création libre :</b> pas de vagues automatiques. Fabriquez les planètes, maisons et bases, accueillez des habitants, puis envoyez les menaces choisies vers un point touché. La perte du vaisseau ou du dernier monde termine la partie ; recommencez pour recréer une galaxie.</p>
+        <p><b>Piloter :</b> flèches, WASD ou ZQSD. <b>Viser :</b> souris. <b>Tirer :</b> clic maintenu, Espace ou bouton TIR. Sur mobile : premier doigt dans l’espace pour placer le vaisseau et le déplacer, deuxième doigt pour viser et tirer automatiquement. Le relâchement du premier doigt arrête les tirs : reposez les deux doigts pour repartir. Les flèches tactiles restent disponibles. <b>Pause :</b> P, Échap ou bouton.</p>
+        <p><b>Atelier :</b> choisissez une action puis touchez l’espace. Au clavier, focalisez l’espace, déplacez le viseur avec les flèches et validez avec Entrée. Pour revenir au vaisseau, choisissez « Piloter ». Les missiles du vaisseau frappent plus fort que les balles ; ni l’un ni l’autre ne blesse les planètes. Utilisez les menaces ou la destruction confirmée pour détruire un monde.</p>
         <p><b>Menaces :</b> météorites lentes (roches), comètes rapides (traînées), monstres (tentacules), missiles guidés (triangles) et lasers (lignes roses annoncées en pointillés). Tous sont neutralisables, sauf les faisceaux : esquivez-les !</p>
         <p>Les monstres annoncent puis lancent leurs lasers. Les boucliers absorbent les attaques pendant 8 secondes. Chaque menace détruite rapporte des crédits et des points. Chaque vague achevée répare 15 points de coque et rapporte 25 crédits.</p>
         <p>Le sacrifice est facultatif et irréversible : il supprime tous les habitants et maisons, coûte 100 points et ne rapporte rien. Il ne peut pas être annulé après confirmation.</p>

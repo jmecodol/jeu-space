@@ -37,6 +37,11 @@ aside { background: #111a2f; border: 1px solid #364463; border-radius: 16px; pad
 details { border-top: 1px solid #364463; padding-top: 15px; font-size: .85rem; }
 summary { padding: 8px 0; font-weight: 700; }
 footer { text-align: center; color: #afc0d8; font-size: .8rem; }
+select { width: 100%; min-height: 44px; background: #182b43; color: #eef5ff; border: 1px solid #7996b8; border-radius: 8px; padding: 10px; font: inherit; margin: 6px 0 12px; }
+label { display: block; font-size: .85rem; color: #c9e6f5; margin-top: 8px; }
+select:focus-visible { outline: 3px solid #ffe18a; outline-offset: 2px; }
+.toolbox { margin-bottom: 20px; padding: 10px; background: #0b1429; border: 1px solid #48627f; border-radius: 12px; }
+.toolbox button { width: 100%; }
 dialog { max-width: 480px; width: calc(100% - 32px); background: #142038; color: #eef5ff; border: 1px solid #f28b9d; border-radius: 16px; padding: 24px; }
 dialog::backdrop { background: #020716d9; }
 .dialog-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: flex-end; }
@@ -54,7 +59,7 @@ dialog::backdrop { background: #020716d9; }
   main { grid-template-columns: 1fr; gap: 12px; padding: 0 10px; }
   header { padding: 14px 12px; }
   aside { padding: 16px; }
-  .planet-list { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .planet-list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; max-height: 210px; overflow-y: auto; }
   .planet-card { padding: 9px 6px; }
   .planet-card span { font-size: .7rem; }
   .hud { padding: 9px 6px; gap: 6px; font-size: .65rem; }
@@ -64,5 +69,10 @@ dialog::backdrop { background: #020716d9; }
   .panel p { font-size: .8rem; margin: 8px 0; }
   .panel h2 { font-size: 1.05rem; margin: 8px 0; }
   .touch-controls { display: flex; }
+}
+@media (pointer: coarse) and (orientation: landscape) and (min-width: 700px) {
+  main { grid-template-columns: minmax(0, 1fr) 280px; }
+  aside { max-height: 75dvh; overflow-y: auto; }
+  .planet-list { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }

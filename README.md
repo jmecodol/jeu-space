@@ -4,6 +4,22 @@ Jeu spatial 2D en français, autonome, sans framework, compilation, backend ni r
 
 ## Jouer
 
+### Nouveau : atelier et pilotage à deux doigts
+
+Le mode **Création libre**, sélectionné à l’accueil par défaut, n’impose aucune vague automatique : vous contrôlez la galaxie. Le mode **Défense** conserve les six vagues et les coûts décrits plus bas.
+
+- **Téléphone / tablette :** dans l’espace, le premier doigt place et déplace le vaisseau (légèrement au-dessus du doigt pour rester visible). Le second doigt indique la direction et déclenche les tirs continus. Relever le second arrête le tir ; relever le premier réinitialise les deux rôles. Reposez les doigts pour reprendre. Les boutons de déplacement et TIR restent utilisables.
+- **Armes :** choisissez balles rapides ou missiles plus lents et plus puissants (quatre points de dégâts, contre un pour une balle), avec un effet d’explosion. Les armes du vaisseau ne blessent jamais les planètes.
+- **Planètes :** dans l’atelier, choisissez « Créer une planète », puis touchez un endroit libre. Maximum dix mondes vivants, avec un espacement minimum. Les nouveaux mondes possèdent une atmosphère visuelle, mais aucun bâtiment ni habitant au départ.
+- **Colonies :** sélectionnez un monde avec sa fiche ou l’action de sélection. Une base accueille quinze habitants (maximum trois bases) en plus des cinq places par maison. Accueillez jusqu’à cinq habitants par action, dans la limite des places disponibles. Choisissez leur apparence : danseurs à deux pieds, chapeaux pointus ou peuple lumineux. Le choix s’applique à la colonie entière. Les silhouettes visibles sont limitées à douze pour la lisibilité ; le compteur affiche toute la population.
+- **Attaques :** choisissez une météorite, un astéroïde géant, une comète, un monstre à tentacules, un monstre à carapace ou un missile. Avec « Lancer une menace », touchez la cible : la menace voyage depuis le bord supérieur jusqu’au point fixé. Le bouton « Envoyer vers la planète sélectionnée » évite de devoir toucher le terrain. Maximum soixante menaces simultanées.
+- **Construction et installation gratuites en création** ; en défense : base 60 crédits et installation de cinq habitants 10 crédits. Les boucliers sont également gratuits en création.
+- **Destruction :** les menaces endommagent les mondes et peuvent supprimer bâtiments et habitants, avec des explosions sans gore. La destruction volontaire conserve sa confirmation explicite, sa pénalité et la défaite si le dernier monde disparaît. Le mode libre n’a pas de victoire imposée.
+- **Menus mobiles :** tous les outils restent accessibles par défilement volontaire en portrait ; sur une tablette en paysage, le panneau latéral défile indépendamment. L’espace et les commandes ne déclenchent pas de défilement tactile.
+- **Clavier de l’atelier :** focalisez l’espace avec Tab, utilisez les flèches pour déplacer le viseur et Entrée pour exécuter l’action choisie. Revenez à « Piloter » pour contrôler le vaisseau.
+
+Les atmosphères sont un effet visuel : il n’y a pas de simulation physique de l’air ni de vue à pied. Le rendu reste un jeu 2D stylisé, avec un vaisseau détaillé, pas une simulation photoréaliste.
+
 Ouvrez `index.html` dans un navigateur récent, ou lancez depuis la racine du dépôt :
 
 ```sh
