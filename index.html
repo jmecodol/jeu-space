@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080e22">
+  <title>Gardiens des planètes</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='17' fill='%2374d6ba'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <header>
+    <div><span class="eyebrow">MISSION • SECTEUR 07</span><h1>Gardiens des planètes</h1></div>
+  </header>
+  <main>
+    <section class="arena" aria-label="Zone de jeu">
+      <nav class="game-toolbar" aria-label="Commandes du cockpit">
+        <button id="pilot">Piloter</button>
+        <button id="menu" aria-expanded="false" aria-controls="console">☰ Console</button>
+        <button id="fullscreen">Plein écran</button>
+        <button id="pause" disabled>Pause (P)</button>
+      </nav>
+      <div class="hud" aria-label="Statistiques de la mission">
+        <span>Score <strong id="score">0</strong></span>
+        <span>Vague <strong id="wave">1 / 6</strong></span>
+        <span>Coque <strong id="health">100 %</strong></span>
+        <span>Crédits <strong id="credits">60</strong></span>
+        <span>Record <strong id="best">0</strong></span>
+      </div>
+      <canvas id="space" width="1000" height="650" tabindex="0" aria-label="Espace de jeu. Premier doigt : placer et déplacer le vaisseau. Second doigt : viser et tirer. Sur ordinateur : flèches ou WASD, souris et clic. Atelier : choisir une action puis toucher l’espace ; au clavier, flèches pour placer le viseur puis Entrée.">
+        Ce jeu nécessite un navigateur prenant en charge Canvas et JavaScript.
+      </canvas>
+      <div class="cockpit-frame" aria-hidden="true"><div class="cockpit-dashboard">GARDIENS • NAVIGATION / ARMEMENT</div></div>
+      <div class="cannon-controls" aria-label="Canons extérieurs du hublot">
+        <button data-cannon="0" class="cannon top-left" aria-pressed="true">↘ Canon 1</button>
+        <button data-cannon="1" class="cannon top-right" aria-pressed="false">Canon 2 ↙</button>
+        <button data-cannon="2" class="cannon bottom-left" aria-pressed="false">↗ Canon 3</button>
+        <button data-cannon="3" class="cannon bottom-right" aria-pressed="false">Canon 4 ↖</button>
+      </div>
+      <div class="navigation-controls" aria-label="Orientation du hublot">
+        <button data-turn="-1" aria-label="Tourner à gauche, maintenir">↶</button>
+        <output id="heading" aria-label="Angle du hublot">0°</output>
+        <button data-turn="1" aria-label="Tourner à droite, maintenir">↷</button>
+        <button id="center-view">Recentrer</button>
+        <button id="auto-fire" aria-pressed="false">Tir continu : arrêt</button>
+      </div>
+      <p id="action-hint" class="action-hint">Pilotage • 1 doigt : position · 2e doigt : visée et tir</p>
+      <div id="overlay" class="overlay">
+        <div class="panel">
+          <span class="eyebrow">PROTÉGER • BÂTIR • SURVIVRE</span>
+          <h2 id="overlay-title">La galaxie compte sur vous</h2>
+          <p id="overlay-text">Créez votre galaxie, peuplez ses mondes et dirigez les attaques. Sur écran tactile : premier doigt pour déplacer le vaisseau, second doigt pour viser et tirer.</p>
+          <label for="mode">Mode de jeu</label>
+          <select id="mode"><option value="creative">Création libre — vous contrôlez les menaces</option><option value="mission">Défense — six vagues automatiques</option></select>
+          <button id="start" class="primary">Commencer la mission</button>
+        </div>
+      </div>
+      <div class="touch-controls" aria-label="Commandes tactiles">
+        <div class="dpad">
+          <button data-move="up" aria-label="Monter">▲</button>
+          <button data-move="left" aria-label="Aller à gauche">◀</button>
+          <button data-move="down" aria-label="Descendre">▼</button>
+          <button data-move="right" aria-label="Aller à droite">▶</button>
+        </div>
+        <div><span class="touch-hint">1 doigt : vaisseau<br>2e doigt : visée + tir</span><button id="fire" aria-label="Tirer, maintenir pour tir continu">TIR ◎</button></div>
+      </div>
+    <aside id="console" aria-label="Console du vaisseau" hidden>
+      <button id="close-menu">Fermer la console ✕</button>
+      <details class="toolbox" open>
+        <summary>Atelier de la galaxie</summary>
+        <label for="view">Caméra</label>
+        <select id="view"><option value="cockpit">Depuis le cockpit</option><option value="external">Vue extérieure</option></select>
+        <label for="weapon">Arme du vaisseau</label>
+        <select id="weapon"><option value="bullet">Balles rapides</option><option value="missile">Missiles explosifs</option></select>
+        <label for="tool">Action dans l’espace</label>
+        <select id="tool">
+          <option value="pilot">Piloter / viser et tirer</option>
+          <option value="select">Sélectionner une planète</option>
+          <option value="planet">Créer une planète au toucher</option>
+          <option value="attack">Lancer une menace vers le point touché</option>
+        </select>
+        <div id="threat-gallery" class="threat-gallery" aria-label="Choisir une menace par son image"></div>
+        <label for="threat">Menace à lancer</label>
+        <select id="threat">
+          <option value="meteor">Météorite rocheuse</option>
+          <option value="heavy">Astéroïde géant</option>
+          <option value="comet">Comète de glace</option>
+          <option value="monster">Monstre à tentacules</option>
+          <option value="swarm">Monstre à carapace</option>
+          <option value="missile">Missile guidé</option>
+        </select>
+        <p class="muted">En création, bâtiments et habitants sont gratuits. Choisissez une action puis touchez l’espace. Les menaces partent du bord supérieur vers votre cible ; leurs explosions peuvent détruire les colonies.</p>
+        <button id="target-attack">Envoyer vers la planète sélectionnée</button>
+      </details>
+      <span class="eyebrow">VOS MONDES</span>
+      <h2>Conseil des colonies</h2>
+      <div id="planets" class="planet-list" aria-label="Sélection de planète"></div>
+      <section class="management">
+        <h3 id="selected-name">Colonie sélectionnée</h3>
+        <p id="selected-info"></p>
+        <button id="build" class="primary" disabled>Construire une maison · 30 crédits</button>
+        <button id="base" disabled>Construire une base · 60 crédits</button>
+        <label for="species">Habitants à accueillir</label>
+        <select id="species"><option value="dancers">Danseurs à deux pieds</option><option value="hats">Extraterrestres à chapeaux pointus</option><option value="glow">Peuple lumineux</option></select>
+        <button id="settle" disabled>Accueillir 5 habitants · 10 crédits</button>
+        <button id="protect" disabled>Protéger · bouclier 8 s · 20 crédits</button>
+        <button id="sacrifice" class="danger" disabled>Détruire volontairement cette planète</button>
+        <p class="muted">Une maison accueille 5 habitants, une base 15. Croissance : +1 toutes les 4 secondes. Maximum : 8 maisons et 3 bases. Les attaques réduisent la population et détruisent les bâtiments ; pas de gore.</p>
+      </section>
+      <p id="notice" role="status" aria-live="polite">Prêt pour le décollage.</p>
+      <details>
+        <summary>Règles et commandes</summary>
+        <p>Survivez à 6 vagues avec au moins une colonie. Défaite si la coque atteint zéro ou si toutes les colonies disparaissent. Les tirs alliés ne touchent jamais les planètes.</p>
+        <p><b>Création libre :</b> pas de vagues automatiques. Fabriquez les planètes, maisons et bases, accueillez des habitants, puis envoyez les menaces choisies vers un point touché. La perte du vaisseau ou du dernier monde termine la partie ; recommencez pour recréer une galaxie.</p>
+        <p><b>Piloter :</b> flèches, WASD ou ZQSD. <b>Viser :</b> souris. <b>Tirer :</b> clic maintenu, Espace ou bouton TIR. Sur mobile : premier doigt dans l’espace pour placer le vaisseau et le déplacer, deuxième doigt pour viser et tirer automatiquement. Le relâchement du premier doigt arrête les tirs : reposez les deux doigts pour repartir. Les flèches tactiles restent disponibles. <b>Pause :</b> P, Échap ou bouton.</p>
+        <p><b>Atelier :</b> choisissez une action puis touchez l’espace. Au clavier, focalisez l’espace, déplacez le viseur avec les flèches et validez avec Entrée. Pour revenir au vaisseau, choisissez « Piloter ». Les missiles du vaisseau frappent plus fort que les balles ; ni l’un ni l’autre ne blesse les planètes. Utilisez les menaces ou la destruction confirmée pour détruire un monde.</p>
+        <p><b>Canons :</b> choisissez un des quatre coins du hublot. Un clic ou glissement fixe l’objectif ; « Tir continu » tire vers lui après relâchement. <b>Tourner :</b> maintenez ↶ / ↷ ou Q / E, sans limite à 360°. Le compteur et les étoiles nommées servent de repères. Recentrer ramène le hublot à zéro. En cockpit, A déplace à gauche et Q tourne. Rotation 2D du hublot, pas caméra sphérique 3D.</p>
+        <p><b>Menaces :</b> météorites lentes (roches), comètes rapides (traînées), monstres (tentacules), missiles guidés (triangles) et lasers (lignes roses annoncées en pointillés). Tous sont neutralisables, sauf les faisceaux : esquivez-les !</p>
+        <p>Les monstres annoncent puis lancent leurs lasers. Les boucliers absorbent les attaques pendant 8 secondes. Chaque menace détruite rapporte des crédits et des points. Chaque vague achevée répare 15 points de coque et rapporte 25 crédits.</p>
+        <p>Le sacrifice est facultatif et irréversible : il supprime tous les habitants et maisons, coûte 100 points et ne rapporte rien. Il ne peut pas être annulé après confirmation.</p>
+      </details>
+      <p class="muted" id="losses">Planètes perdues : 0 · Sacrifices : 0 · Menaces neutralisées : 0</p>
+    </aside>
+    </section>
+  </main>
+  <dialog id="confirm">
+    <form method="dialog">
+      <h2>Détruire cette colonie ?</h2>
+      <p id="confirm-text"></p>
+      <p>Cette décision est définitive. Aucun sacrifice n’est nécessaire pour gagner.</p>
+      <div class="dialog-actions"><button value="cancel" autofocus>Annuler</button><button value="destroy" class="danger">Confirmer la destruction</button></div>
+    </form>
+  </dialog>
+  <footer>Un petit vaisseau. Trois mondes. À vous de choisir leur avenir.</footer>
+  <noscript>Activez JavaScript pour jouer à Gardiens des planètes.</noscript>
+</body>
+</html>
