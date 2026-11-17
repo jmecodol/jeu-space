@@ -4,20 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f6f3eb">
-  <title>Les petites dictées</title>
+  <title>Les petites dictées rigolotes</title>
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="./style.css">
   <script src="./script.js" defer></script>
 </head>
 <body>
   <header>
-    <a class="brand" href="./">✎ Les petites dictées</a>
+    <a class="brand" href="./">✎ Les dictées rigolotes</a>
     <button id="sound" aria-pressed="true">Son : activé</button>
   </header>
   <main>
-    <p class="eyebrow">UN MOT APRÈS L’AUTRE</p>
-    <h1>À toi de trouver les bons mots !</h1>
-    <p class="intro">Touche un mot manquant, puis choisis la bonne orthographe. Tu peux toujours réessayer.</p>
+    <p class="eyebrow">UNE LETTRE CHANGE TOUT… OU PRESQUE !</p>
+    <h1>Des mots, des pièges et des fous rires !</h1>
+    <p class="intro">Un dragon mange un désert ? Un pirate pêche près d’un cochon ? Lis la mission, puis choisis les mots qui racontent la bonne histoire !</p>
     <nav id="levels" aria-label="Niveau scolaire"></nav>
     <section class="exercise" aria-label="Dictée à compléter">
       <div class="exercise-header">
@@ -25,9 +25,10 @@
         <span id="success-count"></span>
       </div>
       <progress id="progress" value="0" max="10" aria-label="Phrases terminées dans ce niveau"></progress>
+      <p id="clue" class="clue"></p>
       <p id="sentence" class="sentence" aria-label="Phrase à compléter"></p>
       <section id="choices-panel" aria-labelledby="choices-title" hidden>
-        <h2 id="choices-title">Quelle est la bonne orthographe ?</h2>
+        <h2 id="choices-title">Quel choix raconte la bonne histoire ?</h2>
         <div id="choices" class="choices"></div>
       </section>
       <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
@@ -40,9 +41,9 @@
       <button id="next-level" class="primary">Passer au niveau suivant →</button>
     </section>
     <button id="restart" class="restart">Recommencer ce niveau</button>
-    <p class="help">10 phrases par niveau · Du plus simple au plus difficile · Sans chronomètre</p>
+    <p class="help">10 phrases par niveau · Sons, espaces, virgules et sens contraires · Sans chronomètre</p>
     <noscript>Active JavaScript dans ton navigateur pour jouer aux dictées.</noscript>
   </main>
-  <footer>Prends ton temps. Chaque essai t’aide à progresser !</footer>
+  <footer>Un autre sens n’est pas toujours une faute de français : c’est juste une autre histoire !</footer>
 </body>
 </html>
