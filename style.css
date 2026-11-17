@@ -36,6 +36,26 @@ footer { text-align: center; padding: 12px 20px 30px; }
 .celebration { font-size: 4rem; color: #946000; }
 .completion h2 { font-size: 2rem; }
 .completion p { line-height: 1.8; }
+.storybook { background: #eaf3e9; border: 2px solid #b1c7c0; padding: 20px; border-radius: 26px; margin-bottom: 22px; }
+.storybook h2 { font-size: clamp(1.3rem, 4vw, 1.8rem); margin: 0 0 12px; }
+.storybook p { line-height: 1.65; }
+.story-path { display: flex; justify-content: center; gap: 7px; padding: 0; list-style: none; flex-wrap: wrap; }
+.story-path li { width: 30px; height: 30px; display: grid; place-items: center; border: 2px solid #718a7e; border-radius: 50%; font-size: .75rem; background: #fff; }
+.story-path li.done { background: #256550; color: #fff; }
+.story-path li[aria-current="step"] { border: 3px solid #8a5700; background: #fff0c8; font-weight: 800; }
+.scene { display: flex; align-items: center; justify-content: center; gap: 12px; max-width: 500px; margin: auto; padding: 8px; border-radius: 22px; background: linear-gradient(#d5efff 70%, #d2e8bf 70%); }
+.hero { width: 52%; max-width: 230px; height: auto; }
+.scene-prop { width: 45%; padding: 10px; }
+#scene-icon { font-size: clamp(2.4rem, 8vw, 4rem); display: block; }
+#scene-caption { display: block; font-size: .85rem; overflow-wrap: anywhere; font-weight: 750; padding-top: 6px; }
+.scene.mishap { background: linear-gradient(#ffe8e5 70%, #f5ddc8 70%); border: 2px dashed #9e2424; }
+.scene.success { border: 2px solid #256550; }
+.story-state { font-size: 1.1rem; font-weight: 650; }
+.previous-step { background: #fff; padding: 12px; border-radius: 12px; font-size: .9rem; }
+.journal { text-align: left; border-top: 1px solid #b1c7c0; padding-top: 12px; }
+.journal summary { cursor: pointer; min-height: 44px; padding: 10px; font-weight: 750; }
+.journal li { padding: 6px 0; line-height: 1.5; }
+.journal summary:focus-visible { outline: 4px solid #8a5700; outline-offset: 3px; }
 @media (max-width: 480px) {
   header { padding: 12px; }
   .brand { font-size: .95rem; }

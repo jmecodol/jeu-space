@@ -16,9 +16,43 @@
   </header>
   <main>
     <p class="eyebrow">UNE LETTRE CHANGE TOUT… OU PRESQUE !</p>
-    <h1>Des mots, des pièges et des fous rires !</h1>
-    <p class="intro">Un dragon mange un désert ? Un pirate pêche près d’un cochon ? Lis la mission, puis choisis les mots qui racontent la bonne histoire !</p>
+    <h1>Pipo et la grande aventure des mots</h1>
+    <p class="intro">Tu es le guide de Pipo, le petit dragon. Choisis les bons mots pour l’aider à avancer ! Un mot de travers ? Une catastrophe rigolote… que tu peux toujours réparer.</p>
     <nav id="levels" aria-label="Niveau scolaire"></nav>
+    <section class="storybook" aria-labelledby="story-title">
+      <h2 id="story-title"></h2>
+      <p id="story-intro"></p>
+      <ol id="story-path" class="story-path" aria-label="Les dix étapes de l’aventure"></ol>
+      <div id="scene" class="scene">
+        <svg class="hero" viewBox="0 0 220 180" role="img" aria-labelledby="hero-title">
+          <title id="hero-title">Pipo, un petit dragon souriant avec un sac d’aventurier</title>
+          <ellipse cx="111" cy="166" rx="76" ry="9" fill="#b9d1c5"/>
+          <path d="M66 125Q11 142 30 88Q34 116 71 101" fill="#3a9676" stroke="#245c53" stroke-width="3"/>
+          <path d="M128 97L180 52 172 112 139 126Z" fill="#f3bd72" stroke="#245c53" stroke-width="3"/>
+          <ellipse cx="102" cy="121" rx="44" ry="42" fill="#64ba8c" stroke="#245c53" stroke-width="3"/>
+          <ellipse cx="105" cy="132" rx="24" ry="27" fill="#e7edb4"/>
+          <path d="M74 151L66 165H92M119 154L121 165H144" fill="#64ba8c" stroke="#245c53" stroke-width="5" stroke-linecap="round"/>
+          <path d="M78 52L74 28 94 44M125 42L141 25 139 55" fill="#f3bd72" stroke="#245c53" stroke-width="3"/>
+          <rect x="65" y="41" width="91" height="65" rx="29" fill="#64ba8c" stroke="#245c53" stroke-width="3"/>
+          <ellipse cx="138" cy="83" rx="28" ry="20" fill="#8bd0a0"/>
+          <circle cx="92" cy="64" r="8" fill="white"/><circle cx="125" cy="64" r="8" fill="white"/>
+          <circle cx="94" cy="65" r="4" fill="#243f3d"/><circle cx="127" cy="65" r="4" fill="#243f3d"/>
+          <path id="hero-mouth" d="M111 86Q123 99 138 88" fill="none" stroke="#243f3d" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="151" cy="79" r="2" fill="#243f3d"/>
+          <path d="M63 111L52 129M137 114L152 127" stroke="#245c53" stroke-width="10" stroke-linecap="round"/>
+          <rect x="44" y="111" width="24" height="34" rx="6" fill="#cb8a50" stroke="#7d5133" stroke-width="3"/>
+          <path d="M50 110V104Q56 96 62 104V110" fill="none" stroke="#7d5133" stroke-width="3"/>
+        </svg>
+        <div class="scene-prop"><span id="scene-icon" aria-hidden="true"></span><span id="scene-caption"></span></div>
+      </div>
+      <p id="story-state" class="story-state"></p>
+      <p id="previous-step" class="previous-step" hidden></p>
+      <details class="journal">
+        <summary>Mon carnet d’aventure <span id="journal-count">0 / 10</span></summary>
+        <p>Les bons mots réparent les petits accidents et débloquent la suite. Pipo ne perd jamais de vie.</p>
+        <ol id="journal"></ol>
+      </details>
+    </section>
     <section class="exercise" aria-label="Dictée à compléter">
       <div class="exercise-header">
         <span id="position"></span>
@@ -32,12 +66,13 @@
         <div id="choices" class="choices"></div>
       </section>
       <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
-      <button id="next" class="primary" hidden>Phrase suivante →</button>
+      <button id="next" class="primary" hidden>Continuer l’aventure →</button>
     </section>
     <section id="complete" class="completion" aria-labelledby="complete-title" hidden>
       <span class="celebration" aria-hidden="true">★</span>
       <h2 id="complete-title" tabindex="-1"></h2>
       <p id="summary"></p>
+      <p id="story-ending"></p>
       <button id="next-level" class="primary">Passer au niveau suivant →</button>
     </section>
     <button id="restart" class="restart">Recommencer ce niveau</button>
