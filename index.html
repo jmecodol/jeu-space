@@ -3,8 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title></title>
-  <style>html, body { margin: 0; min-height: 100%; background: #fff; }</style>
+  <meta name="theme-color" content="#f6f3eb">
+  <title>Les petites dictées</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./script.js" defer></script>
 </head>
-<body></body>
+<body>
+  <header>
+    <a class="brand" href="./">✎ Les petites dictées</a>
+    <button id="sound" aria-pressed="true">Son : activé</button>
+  </header>
+  <main>
+    <p class="eyebrow">UN MOT APRÈS L’AUTRE</p>
+    <h1>À toi de trouver les bons mots !</h1>
+    <p class="intro">Touche un mot manquant, puis choisis la bonne orthographe. Tu peux toujours réessayer.</p>
+    <nav id="levels" aria-label="Niveau scolaire"></nav>
+    <section class="exercise" aria-label="Dictée à compléter">
+      <div class="exercise-header">
+        <span id="position"></span>
+        <span id="success-count"></span>
+      </div>
+      <progress id="progress" value="0" max="10" aria-label="Phrases terminées dans ce niveau"></progress>
+      <p id="sentence" class="sentence" aria-label="Phrase à compléter"></p>
+      <section id="choices-panel" aria-labelledby="choices-title" hidden>
+        <h2 id="choices-title">Quelle est la bonne orthographe ?</h2>
+        <div id="choices" class="choices"></div>
+      </section>
+      <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
+      <button id="next" class="primary" hidden>Phrase suivante →</button>
+    </section>
+    <section id="complete" class="completion" aria-labelledby="complete-title" hidden>
+      <span class="celebration" aria-hidden="true">★</span>
+      <h2 id="complete-title" tabindex="-1"></h2>
+      <p id="summary"></p>
+      <button id="next-level" class="primary">Passer au niveau suivant →</button>
+    </section>
+    <button id="restart" class="restart">Recommencer ce niveau</button>
+    <p class="help">10 phrases par niveau · Du plus simple au plus difficile · Sans chronomètre</p>
+    <noscript>Active JavaScript dans ton navigateur pour jouer aux dictées.</noscript>
+  </main>
+  <footer>Prends ton temps. Chaque essai t’aide à progresser !</footer>
+</body>
 </html>
