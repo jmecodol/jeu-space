@@ -17,7 +17,7 @@
   <main>
     <p class="eyebrow">UNE LETTRE CHANGE TOUT… OU PRESQUE !</p>
     <h1>Pipo et la grande aventure des mots</h1>
-    <p class="intro">Aide Pipo : lis la phrase, puis écris le mot manquant et valide. Une erreur ? Recommence ! Une réussite ? Bravo !</p>
+    <p class="intro">Aide Pipo : lis la mission, puis touche le bon dessin parmi les trois affiches. Bravo ! L’aventure continue toute seule.</p>
     <nav id="levels" aria-label="Niveau scolaire"></nav>
     <div class="adventure-layout">
     <section class="storybook" aria-labelledby="story-title">
@@ -62,14 +62,11 @@
       <p id="story-state" class="story-state"></p>
       <p id="clue" class="clue"></p>
       <p id="sentence" class="sentence" aria-label="Phrase à compléter"></p>
-      <form id="answer-form" class="answer-form">
-        <div id="answer-picture" aria-hidden="true"></div>
-        <label for="answer-input">Écris le mot ou les mots manquants</label>
-        <input id="answer-input" type="text" inputmode="text" enterkeyhint="done" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="160" aria-describedby="clue feedback" required>
-        <button id="submit-answer" type="submit" class="primary">Valider ✓</button>
-      </form>
+      <section aria-labelledby="posters-title">
+        <h2 id="posters-title">Touche le bon dessin</h2>
+        <div id="posters" class="choices posters"></div>
+      </section>
       <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
-      <button id="next" class="primary" hidden>Continuer l’aventure →</button>
     </section>
     </div>
     <section id="complete" class="completion" aria-labelledby="complete-title" hidden>

@@ -229,6 +229,7 @@
   let solved = new Set(), mistakes = 0, firstTry = 0, phraseMistakes = 0;
   let sound = true, audio = null;
   let history = [];
+  let advanceTimer = null;
   const phrase = () => levels[levelIndex].phrases[phraseIndex];
   const scene = () => levels[levelIndex].scenes[phraseIndex];
 
@@ -283,8 +284,6 @@
     } catch { /* Le retour écrit reste disponible sans audio. */ }
   }
 
-  const normalize = text => text.normalize('NFC').toLocaleLowerCase('fr').replace(/[’‘]/g, "'").trim().replace(/\s+/g, ' ').replace(/\s+([!?.,;:])/g, '$1');
-
   function renderSentence() {
     const [text, ...gaps] = phrase();
     $('sentence').replaceChildren();
@@ -295,50 +294,54 @@
       button.className = `gap${solved.has(i) ? ' solved' : ''}`;
       button.textContent = solved.has(i) ? `${gaps[i].answer} ✓` : 'quel mot ?';
       button.dataset.gap = i;
-      button.setAttribute('aria-label', solved.has(i) ? `${gaps[i].answer}, bonne réponse` : `Mot manquant ${i + 1} à écrire ci-dessous`);
+      button.setAttribute('aria-label', solved.has(i) ? `${gaps[i].answer}, bonne réponse` : `Mot manquant ${i + 1} à retrouver avec les dessins`);
       $('sentence').append(button);
     });
   }
 
-  function prepareInput(i) {
+  function preparePosters(i) {
     activeGap = i;
     renderSentence();
-    $('answer-input').value = '';
-    $('answer-input').disabled = false;
-    $('answer-input').removeAttribute('aria-invalid');
-    $('submit-answer').disabled = false;
-    $('answer-form').classList.remove('wrong', 'correct');
-    $('answer-picture').replaceChildren();
-    addPicture($('answer-picture'), optionPicture(phrase()[i + 1].answer, i));
+    $('posters').replaceChildren();
+    const options = [...phrase()[i + 1].options];
+    for (let j = options.length - 1; j > 0; j--) {
+      const random = Math.floor(Math.random() * (j + 1));
+      [options[j], options[random]] = [options[random], options[j]];
+    }
+    options.forEach(option => {
+      const button = document.createElement('button');
+      button.className = 'choice poster';
+      button.setAttribute('aria-label', option);
+      button.setAttribute('aria-describedby', 'clue');
+      addPicture(button, optionPicture(option, i));
+      button.addEventListener('click', () => answer(i, option, button));
+      $('posters').append(button);
+    });
   }
 
-  function answer(i, option) {
-    if (solved.has(i)) return;
-    const correct = normalize(option) === normalize(phrase()[i + 1].answer);
+  function answer(i, option, button) {
+    if (solved.has(i) || button.disabled) return;
+    const correct = option === phrase()[i + 1].answer;
     tone(correct);
     if (!correct) {
       mistakes++; phraseMistakes++;
-      $('answer-form').classList.add('wrong');
-      $('answer-input').value = '';
-      $('answer-input').setAttribute('aria-invalid', 'true');
+      button.classList.add('wrong');
+      button.disabled = true;
+      button.setAttribute('aria-label', `${option} : erreur, recommence`);
       document.querySelector(`[data-gap="${i}"]`).classList.add('wrong');
       const preview = phrase()[0].replace(`{${i}}`, () => option);
-      const known = phrase()[i + 1].options.find(word => normalize(word) === normalize(option));
-      const mishap = phrase()[i + 1].jokes[known] || 'Pipo a mélangé ses lettres : son sac se met à faire des bulles !';
+      const mishap = phrase()[i + 1].jokes[option];
       illustrate('mishap', option);
       $('story-state').textContent = `Petit détour farfelu ! ${mishap} Rien de grave : aide Pipo à réparer ce tour de magie.`;
-      $('feedback').textContent = `✗ Recommence !\nTu as écrit : « ${preview} »\n${mishap}\nAstuce : ${phrase()[i + 1].rule}`;
-      $('answer-input').focus({ preventScroll: true });
+      $('feedback').textContent = `✗ Recommence !\nAvec ce dessin : « ${preview} »\n${mishap}`;
+      [...$('posters').children].find(poster => !poster.disabled)?.focus({ preventScroll: true });
       return;
     }
     solved.add(i);
     renderSentence();
-    $('answer-form').classList.remove('wrong');
-    $('answer-form').classList.add('correct');
-    $('answer-input').removeAttribute('aria-invalid');
-    $('answer-input').value = phrase()[i + 1].answer;
-    $('answer-input').disabled = true;
-    $('submit-answer').disabled = true;
+    button.classList.add('correct');
+    button.setAttribute('aria-label', `${option} : bravo`);
+    [...$('posters').children].forEach(poster => { poster.disabled = true; });
     if (solved.size === phrase().length - 1) {
       history.push({ ...scene() });
       illustrate('success', scene().souvenir);
@@ -348,13 +351,14 @@
       $('progress').value = phraseIndex + 1;
       $('success-count').textContent = `${phraseIndex + 1} / 10 réussies`;
       $('feedback').textContent = `✓ Bravo ! C’est bien le sens de la mission.\nÀ retenir : ${phrase()[i + 1].rule}`;
-      $('next').hidden = false;
-      $('next').textContent = phraseIndex === 9 ? 'Découvrir la fin de l’histoire ★' : 'Continuer l’aventure →';
-      $('next').focus({ preventScroll: true });
+      advanceTimer = setTimeout(() => { advanceTimer = null; advance(); }, 2200);
     } else {
       $('feedback').textContent = '✓ Bien joué ! Complète le mot suivant.';
-      prepareInput(i + 1);
-      $('answer-input').focus({ preventScroll: true });
+      advanceTimer = setTimeout(() => {
+        advanceTimer = null;
+        preparePosters(i + 1);
+        $('posters').firstElementChild.focus({ preventScroll: true });
+      }, 2200);
     }
   }
 
@@ -362,8 +366,7 @@
     solved = new Set(); activeGap = null; phraseMistakes = 0;
     $('complete').hidden = true;
     document.querySelector('.exercise').hidden = false;
-    $('next').hidden = true;
-    $('feedback').textContent = 'Écris ta réponse, puis appuie sur Valider ou Entrée.';
+    $('feedback').textContent = 'Touche une des trois affiches pour aider Pipo.';
     $('clue').textContent = `Ta mission : ${phrase()[1].clue}`;
     $('story-title').textContent = `${levels[levelIndex].name} · ${levels[levelIndex].title}`;
     $('story-intro').textContent = levels[levelIndex].intro;
@@ -376,14 +379,15 @@
     $('success-count').textContent = `${phraseIndex} / 10 réussies`;
     $('progress').value = phraseIndex;
     renderSentence();
-    prepareInput(0);
+    preparePosters(0);
   }
 
   function startLevel(index, focus = true) {
+    clearTimeout(advanceTimer); advanceTimer = null;
     levelIndex = index; phraseIndex = 0; mistakes = 0; firstTry = 0; history = [];
     [...$('levels').children].forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
     showPhrase();
-    if (focus) $('answer-input').focus({ preventScroll: true });
+    if (focus) $('posters').firstElementChild.focus({ preventScroll: true });
   }
 
   levels.forEach((level, i) => {
@@ -393,26 +397,11 @@
     button.addEventListener('click', () => startLevel(i));
     $('levels').append(button);
   });
-  $('answer-form').addEventListener('submit', event => {
-    event.preventDefault();
-    if (activeGap === null || solved.has(activeGap)) return;
-    const value = $('answer-input').value.trim();
-    if (!value) {
-      $('feedback').textContent = 'Écris un mot avant de valider.';
-      $('answer-input').focus({ preventScroll: true });
-      return;
-    }
-    answer(activeGap, value);
-  });
-  $('answer-input').addEventListener('input', () => {
-    $('answer-input').removeAttribute('aria-invalid');
-    $('answer-form').classList.remove('wrong');
-  });
-  $('next').addEventListener('click', () => {
+  function advance() {
     if (solved.size !== phrase().length - 1 || history.length !== phraseIndex + 1) return;
     if (phraseIndex < 9) {
       phraseIndex++; showPhrase();
-      $('answer-input').focus({ preventScroll: true });
+      $('posters').firstElementChild.focus({ preventScroll: true });
       return;
     }
     document.querySelector('.exercise').hidden = true;
@@ -422,7 +411,7 @@
     $('summary').textContent = `10 phrases complétées, dont ${firstTry} sans erreur. ${mistakes} essai(s) à corriger : tu as persévéré et trouvé tous les mots !`;
     $('next-level').textContent = levelIndex < levels.length - 1 ? `Découvrir le ${levels[levelIndex + 1].name} →` : 'Rejouer depuis le CP →';
     $('complete-title').focus({ preventScroll: true });
-  });
+  }
   $('next-level').addEventListener('click', () => startLevel((levelIndex + 1) % levels.length));
   $('restart').addEventListener('click', () => startLevel(levelIndex));
   $('sound').addEventListener('click', () => {

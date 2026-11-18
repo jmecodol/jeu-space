@@ -32,14 +32,18 @@ progress { display: block; width: 100%; height: 10px; margin-top: 16px; accent-c
 .answer-result { font-size: .85rem; min-height: 1.3em; font-weight: 750; }
 .choice.correct { background: #e5f5e9; border-color: #256550; }
 .choice:disabled:not(.correct):not(.wrong) { opacity: .6; }
-.answer-form { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
-.answer-form label, #answer-picture { grid-column: 1 / -1; font-weight: 750; }
-.answer-form input { width: 100%; min-width: 0; min-height: 60px; padding: 12px; border: 3px solid #6b91ab; border-radius: 14px; font: inherit; font-size: clamp(1.3rem, 3vw, 1.8rem); color: #243f3d; background: #f2f9ff; }
-.answer-form input:focus-visible { outline: 4px solid #8a5700; outline-offset: 3px; }
-.answer-form.wrong input { border-color: #b12c2c; background: #ffe4e4; }
-.answer-form.correct input { border-color: #256550; background: #e5f5e9; opacity: 1; -webkit-text-fill-color: #243f3d; }
-.answer-form button:disabled { opacity: .6; }
-@media (max-width: 480px) { .answer-form { grid-template-columns: minmax(0, 1fr); } .answer-form button { width: 100%; } }
+.posters .poster { min-height: 150px; border-radius: 22px; position: relative; }
+.posters .answer-icon { font-size: clamp(2.5rem, 6vw, 4rem); min-height: 90px; }
+.posters .answer-icon svg { width: 90px; height: 90px; }
+.poster.wrong::after, .poster.correct::after { position: absolute; top: 5px; right: 10px; font-size: 1.5rem; font-weight: 800; }
+.poster.wrong::after { content: '✗'; }
+.poster.correct::after { content: '✓'; }
+@media (max-width: 480px) {
+  .posters { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .posters .poster { padding: 6px; min-height: 115px; justify-content: center; }
+  .posters .answer-icon { flex: 0 1 auto; font-size: 2rem; min-height: 65px; overflow-wrap: anywhere; }
+  .posters .answer-icon svg { width: 62px; height: 62px; }
+}
 .adventure-layout { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); align-items: start; gap: 18px; }
 main { max-width: 1200px; }
 .adventure-layout .storybook { margin-bottom: 0; padding: 16px; }
@@ -92,7 +96,7 @@ footer { text-align: center; padding: 12px 20px 30px; }
   main { padding: 12px; }
   nav { gap: 6px; margin: 22px 0; }
   nav button { min-width: 52px; padding: 10px; }
-  .choices { grid-template-columns: 1fr; gap: 10px; }
+  .choices:not(.posters) { grid-template-columns: 1fr; gap: 10px; }
   .choice { width: 100%; min-height: 80px; flex-direction: row; justify-content: flex-start; text-align: left; padding: 10px; }
   .answer-icon { flex: 0 0 76px; font-size: 1.7rem; }
   .answer-label { flex: 1; min-width: 0; }

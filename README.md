@@ -36,28 +36,24 @@ librement pour choisir la difficulté ; changer ou recommencer efface le carnet,
 sans sauvegarde entre deux visites.
 
 1. Lisez la **mission** et la phrase à compléter.
-2. **Écrivez la réponse** dans le champ sous la phrase, puis utilisez **Valider**
-   ou **Entrée**. Sur téléphone ou tablette, toucher le champ ouvre le clavier natif.
-   Certaines étapes attendent plusieurs mots ou une réplique avec sa ponctuation.
-3. En cas d’erreur, la saisie est entièrement effacée, le champ devient rouge et
-   le jeu affiche **« Recommence ! »** avec un son grave et une astuce.
+2. **Touchez le bon dessin parmi les trois affiches**, sans mot écrit sur les cartes,
+   sans champ de saisie et sans clavier virtuel. Chaque image correspond à une réponse.
+   Les cartes sont mélangées à chaque étape ; leur nom reste accessible aux lecteurs d’écran.
+3. En cas d’erreur, l’affiche devient rouge avec une croix et
+   le jeu affiche **« Recommence ! »** avec un son grave et la mésaventure.
    Le carnet, l’étape actuelle et les réussites précédentes sont conservés.
 4. Une bonne réponse affiche **« Bravo ! »**, complète la phrase en vert et joue
-   un son aigu. La réponse est verrouillée et la suite de l’histoire devient accessible.
-5. Passez à la phrase suivante, puis consultez le bilan des dix phrases.
+   un son aigu. Après 2,2 secondes, le jeu passe automatiquement à l’étape suivante.
+5. Après la dixième réussite, le bilan et la fin de l’histoire apparaissent automatiquement.
+   Changer ou recommencer un niveau annule toute transition en attente.
 
-Une illustration de l’objet ou de l’action attendus reste affichée comme indice,
-sans révéler le mot écrit. Les images sont des emojis ou des dessins SVG locaux.
-Les contresens connus déclenchent leur mésaventure personnalisée ; les autres fautes
-provoquent une petite mésaventure de bulles. Le rendu des emojis peut varier selon l’appareil.
+Les trois affiches illustrent les objets ou actions avec des emojis ou des dessins SVG locaux.
+Les notions abstraites sont représentées par des associations de symboles.
+Chaque mauvais choix déclenche sa mésaventure personnalisée.
+Le rendu des emojis peut varier selon l’appareil.
 
-Les majuscules, espaces superflus et formes typographiques d’apostrophes sont tolérés.
-Les accents, lettres, mots et signes de ponctuation attendus doivent être corrects.
-Une saisie vide ne compte pas comme erreur. La correction automatique et les
-suggestions orthographiques sont désactivées lorsque le navigateur le permet.
-
-Sur ordinateur, Pipo apparaît à côté de l’exercice ; sur téléphone, le champ et le
-bouton Valider s’empilent. L’introduction et le carnet se déplient
+Sur ordinateur, Pipo apparaît à côté de l’exercice ; sur téléphone, les trois affiches
+restent côte à côte. L’introduction et le carnet se déplient
 seulement si souhaité pour laisser la place à la question.
 
 Les phrases ne sont pas lues à haute voix : c’est une dictée à trous visuelle.
