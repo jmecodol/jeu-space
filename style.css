@@ -19,13 +19,25 @@ nav button[aria-pressed="true"] { color: #fff; background: #256550; border-color
 .exercise-header { display: flex; justify-content: space-between; gap: 12px; font-size: .9rem; font-weight: 700; color: #536b61; }
 progress { display: block; width: 100%; height: 10px; margin-top: 16px; accent-color: #348163; }
 .sentence { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 650; line-height: 1.85; overflow-wrap: anywhere; margin: 28px 0; }
-.gap { min-width: 110px; padding: 2px 14px; margin: 4px; font-size: inherit; font-weight: inherit; line-height: 1.5; background: #fff4d8; border: 2px dashed #956415; vertical-align: baseline; }
+.gap { display: inline-block; min-width: 110px; padding: 2px 14px; margin: 4px; font-size: .8em; font-weight: inherit; line-height: 1.5; background: #fff4d8; border: 2px dashed #956415; border-radius: 12px; vertical-align: baseline; }
 .gap[aria-expanded="true"] { background: #ffe8ad; }
 .gap.solved { color: #1d5c42; background: #e5f5e9; border: 2px solid #3c825d; }
 .gap.wrong, .choice.wrong { background: #ffe4e4; color: #9e2424; border: 2px solid #b12c2c; }
 #choices-title { font-size: 1rem; color: #536b61; margin-top: 24px; }
-.choices { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; }
-.choice { font-size: clamp(1.35rem, 4vw, 1.8rem); min-width: 120px; }
+.choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.choice { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; font-size: clamp(1.15rem, 2.5vw, 1.6rem); min-width: 0; min-height: 150px; padding: 12px 8px; overflow-wrap: anywhere; border: 3px solid #91b4ca; background: #f2f9ff; box-shadow: 0 5px 0 #dce5eb; }
+.answer-icon { display: flex; align-items: center; justify-content: center; font-size: 2.3rem; min-height: 56px; line-height: 1.25; max-width: 100%; }
+.answer-icon svg { width: 56px; height: 56px; }
+.answer-label { font-weight: 750; }
+.answer-result { font-size: .85rem; min-height: 1.3em; font-weight: 750; }
+.choice.correct { background: #e5f5e9; border-color: #256550; }
+.choice:disabled:not(.correct):not(.wrong) { opacity: .6; }
+.adventure-layout { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); align-items: start; gap: 18px; }
+main { max-width: 1200px; }
+.adventure-layout .storybook { margin-bottom: 0; padding: 16px; }
+.chapter-intro { font-size: .9rem; margin-bottom: 12px; }
+.chapter-intro summary { cursor: pointer; min-height: 44px; padding: 10px 0; }
+.chapter-intro summary:focus-visible { outline: 4px solid #8a5700; }
 .clue { background: #edf4ff; color: #28466a; border-radius: 14px; padding: 16px; line-height: 1.6; font-weight: 650; }
 #feedback { min-height: 3em; font-weight: 700; line-height: 1.6; margin-bottom: 12px; white-space: pre-line; overflow-wrap: anywhere; }
 .primary { background: #256550; color: #fff; border-color: #256550; font-weight: 750; }
@@ -56,6 +68,15 @@ footer { text-align: center; padding: 12px 20px 30px; }
 .journal summary { cursor: pointer; min-height: 44px; padding: 10px; font-weight: 750; }
 .journal li { padding: 6px 0; line-height: 1.5; }
 .journal summary:focus-visible { outline: 4px solid #8a5700; outline-offset: 3px; }
+@media (max-width: 850px) {
+  .adventure-layout { grid-template-columns: 1fr; }
+  .scene { max-width: 350px; }
+  .hero { max-width: 110px; }
+  .story-path { margin: 8px 0; gap: 5px; }
+  .story-path li { width: 25px; height: 25px; }
+  .story-state { margin: 8px 0; font-size: 1rem; }
+  .sentence { margin: 16px 0; line-height: 1.6; }
+}
 @media (max-width: 480px) {
   header { padding: 12px; }
   .brand { font-size: .95rem; }
@@ -63,7 +84,10 @@ footer { text-align: center; padding: 12px 20px 30px; }
   main { padding: 12px; }
   nav { gap: 6px; margin: 22px 0; }
   nav button { min-width: 52px; padding: 10px; }
-  .choices { flex-direction: column; }
-  .choice { width: 100%; }
+  .choices { grid-template-columns: 1fr; gap: 10px; }
+  .choice { width: 100%; min-height: 80px; flex-direction: row; justify-content: flex-start; text-align: left; padding: 10px; }
+  .answer-icon { flex: 0 0 76px; font-size: 1.7rem; }
+  .answer-label { flex: 1; min-width: 0; }
+  .answer-result { max-width: 70px; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }

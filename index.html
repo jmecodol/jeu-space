@@ -17,11 +17,12 @@
   <main>
     <p class="eyebrow">UNE LETTRE CHANGE TOUT… OU PRESQUE !</p>
     <h1>Pipo et la grande aventure des mots</h1>
-    <p class="intro">Tu es le guide de Pipo, le petit dragon. Choisis les bons mots pour l’aider à avancer ! Un mot de travers ? Une catastrophe rigolote… que tu peux toujours réparer.</p>
+    <p class="intro">Aide Pipo : lis la phrase, puis touche une carte avec une image et un mot. Pas le bon mot ? Tu peux réessayer !</p>
     <nav id="levels" aria-label="Niveau scolaire"></nav>
+    <div class="adventure-layout">
     <section class="storybook" aria-labelledby="story-title">
       <h2 id="story-title"></h2>
-      <p id="story-intro"></p>
+      <details class="chapter-intro"><summary>L’histoire de ce chapitre</summary><p id="story-intro"></p></details>
       <ol id="story-path" class="story-path" aria-label="Les dix étapes de l’aventure"></ol>
       <div id="scene" class="scene">
         <svg class="hero" viewBox="0 0 220 180" role="img" aria-labelledby="hero-title">
@@ -45,12 +46,11 @@
         </svg>
         <div class="scene-prop"><span id="scene-icon" aria-hidden="true"></span><span id="scene-caption"></span></div>
       </div>
-      <p id="story-state" class="story-state"></p>
-      <p id="previous-step" class="previous-step" hidden></p>
       <details class="journal">
         <summary>Mon carnet d’aventure <span id="journal-count">0 / 10</span></summary>
         <p>Les bons mots réparent les petits accidents et débloquent la suite. Pipo ne perd jamais de vie.</p>
         <ol id="journal"></ol>
+        <p id="previous-step" class="previous-step" hidden></p>
       </details>
     </section>
     <section class="exercise" aria-label="Dictée à compléter">
@@ -59,15 +59,17 @@
         <span id="success-count"></span>
       </div>
       <progress id="progress" value="0" max="10" aria-label="Phrases terminées dans ce niveau"></progress>
+      <p id="story-state" class="story-state"></p>
       <p id="clue" class="clue"></p>
       <p id="sentence" class="sentence" aria-label="Phrase à compléter"></p>
       <section id="choices-panel" aria-labelledby="choices-title" hidden>
-        <h2 id="choices-title">Quel choix raconte la bonne histoire ?</h2>
+        <h2 id="choices-title">👇 Touche la carte qui complète la phrase</h2>
         <div id="choices" class="choices"></div>
       </section>
       <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
       <button id="next" class="primary" hidden>Continuer l’aventure →</button>
     </section>
+    </div>
     <section id="complete" class="completion" aria-labelledby="complete-title" hidden>
       <span class="celebration" aria-hidden="true">★</span>
       <h2 id="complete-title" tabindex="-1"></h2>

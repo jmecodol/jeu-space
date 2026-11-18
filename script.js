@@ -160,6 +160,71 @@
     }
   ];
 
+  // Chaque ligne illustre les trois choix dans leur ordre d’écriture, avant mélange.
+  const pictures = {
+    CP: [
+      ['🎂', '⛵', 'rake'], ['🥛', '🍚', '🧂'], ['mould', '🥣', '🪣'],
+      ['🍽️', '🎒', '🛏️'], ['🛞', '🔔', '🌹'], ['🪢', 'horn', '🪶'],
+      ['🗺️', '🌱', '🥖'], ['🌉', 'rug', '⭕'], ['🚪', 'table', '👢'],
+      ['🍰', '🌹', '🧵']
+    ],
+    CE1: [
+      ['⚓', '🐷', '🪴'], ['🧹', '🩰', '🎈'], ['🪵', '🏋️', '🍚'],
+      ['🪣', '📜🔏', 'thimble'], ['⛵', '🍳', '🕸️'], ['🧦➡️📦', '🔢🧦', '🔍🧦'],
+      ['📦⬇️', '📦⬆️', '📦👀'], ['🐲🗺️', '🗺️↔️', '✏️🗺️'],
+      ['🪢', 'horn', '👔'], ['🎁➡️', '👀🧦', '🙋🧦']
+    ],
+    CE2: [
+      ['🗺️', '🌱', '🍮'], ['🌾', '🎵', 'bench'], ['🐲🧰', '👉🧰', '🧰'],
+      ['🌱🤲', '🧴', '🔢🌱'], ['🧤🐲', '🚫🧤', '👉🧤'],
+      ['🚫🚶', '🚶', '🩰'], ['🧺⬆️', '🧺⬇️', '🧺↩️'],
+      ['🥖', '🌲', '🛁'], ['🗣️', '🛤️', 'flute'], ['🍽️❗', '🍽️❓', '🚫🍽️']
+    ],
+    CM1: [
+      ['💡🗺️', '🌱', '🐲🛌'], ['📏🧵', '🧑‍🏫🪡', '📏🎀'],
+      ['screw', '🌱🐣', '🧢'], ['🏋️', '🫛', '🐦'],
+      ['⏳', '🌅⏰', '📅🔁'], ['🎈➕', '🎁💺', '🎀➕'],
+      ['🎒✅', '📍🏁', '⏰🏃'], ['🔭', '🥤⏰', '↪️'],
+      ['🛑⬆️', '⬆️⬆️', '🌅⬆️'], ['✉️🎉', '💡⚙️', '🧾']
+    ],
+    CM2: [
+      ['🐲💬🐭', '🎭🐭', '🐭🎩'], ['🗣️🦉🪢', '🦉➡️🪢', '🦉⬅️🪢'],
+      ['❓🎩', '✅📋', '✅🎩'], ['🎩', '🚫🎩', '🎩🎩🎩'],
+      ['❓🎭', '💬🎭', '🙈🎭'], ['😂🎩', '🗣️🎩', '🪡🎩'],
+      ['🚫🎤', '🤫🎤', '🔁🎤'], ['🤫🤫', '🦉💬', '🗣️🗣️'],
+      ['👋➡️🎉', '🎉➡️👋', '🎉➡️👋'], ['🙏🐭🦉', '🐭🦉🙏🐲', '🙏🎭']
+    ]
+  };
+  const drawings = {
+    rake: '<path d="M32 10V54M12 12H52M12 12V24M22 12V24M32 12V24M42 12V24M52 12V24" fill="none" stroke="#75522e" stroke-width="5"/>',
+    mould: '<path d="M8 21H56L51 48H13Z" fill="#9ab4c8" stroke="#35536b" stroke-width="3"/><ellipse cx="32" cy="21" rx="24" ry="7" fill="#e2edf4" stroke="#35536b" stroke-width="3"/>',
+    horn: '<path d="M13 50Q47 52 49 9Q29 37 15 31Z" fill="#e6c58e" stroke="#75522e" stroke-width="3"/>',
+    table: '<path d="M8 24H56V34H8ZM13 34V54M51 34V54" fill="#c88c56" stroke="#75522e" stroke-width="4"/>',
+    bench: '<path d="M8 14H56V30H8ZM5 36H59V43H5ZM13 43V55M51 43V55" fill="#c88c56" stroke="#75522e" stroke-width="3"/>',
+    rug: '<path d="M9 15H55V49H9Z" fill="#c87990" stroke="#714054" stroke-width="3"/><path d="M17 23H47V41H17ZM3 18H9M3 27H9M3 37H9M3 46H9M55 18H61M55 27H61M55 37H61M55 46H61" fill="none" stroke="#714054" stroke-width="2"/>',
+    thimble: '<path d="M18 50L21 18Q32 5 43 18L46 50Z" fill="#b9c9d4" stroke="#35536b" stroke-width="3"/><path d="M27 21V25M37 21V25M25 31V35M38 31V35M24 41V45M39 41V45" stroke="#35536b" stroke-width="3"/>',
+    flute: '<path d="M9 51L48 12L55 19L16 58Z" fill="#dfc67b" stroke="#75522e" stroke-width="3"/><path d="M24 41L27 44M32 33L35 36M40 25L43 28" stroke="#75522e" stroke-width="4"/>',
+    screw: '<path d="M20 14L43 37L35 53L12 30Z" fill="#b9c9d4" stroke="#35536b" stroke-width="3"/><path d="M35 10L53 28L45 36L27 18ZM36 18L45 27M17 31L31 28M23 37L37 34M29 43L41 40" fill="#b9c9d4" stroke="#35536b" stroke-width="3"/>'
+  };
+
+  function optionPicture(option, gapIndex = activeGap) {
+    const index = phrase()[gapIndex + 1].options.indexOf(option);
+    return pictures[levels[levelIndex].name][phraseIndex][index];
+  }
+
+  function addPicture(parent, picture) {
+    const icon = document.createElement('span');
+    icon.className = 'answer-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    if (drawings[picture]) {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 64 64');
+      svg.innerHTML = drawings[picture];
+      icon.append(svg);
+    } else icon.textContent = picture;
+    parent.append(icon);
+  }
+
   let levelIndex = 0, phraseIndex = 0, activeGap = null;
   let solved = new Set(), mistakes = 0, firstTry = 0, phraseMistakes = 0;
   let sound = true, audio = null;
@@ -233,15 +298,11 @@
     text.split(/(\{\d+\})/).forEach(part => {
       const match = part.match(/^\{(\d+)\}$/);
       if (!match) { $('sentence').append(document.createTextNode(part)); return; }
-      const i = Number(match[1]), button = document.createElement('button');
+      const i = Number(match[1]), button = document.createElement('span');
       button.className = `gap${solved.has(i) ? ' solved' : ''}`;
-      button.textContent = solved.has(i) ? `${gaps[i].answer} ✓` : '···';
+      button.textContent = solved.has(i) ? `${gaps[i].answer} ✓` : 'quel mot ?';
       button.dataset.gap = i;
-      button.disabled = solved.has(i);
       button.setAttribute('aria-label', solved.has(i) ? `${gaps[i].answer}, bonne réponse` : `Choisir le mot manquant ${i + 1}`);
-      button.setAttribute('aria-expanded', String(activeGap === i && !solved.has(i)));
-      button.setAttribute('aria-controls', 'choices-panel');
-      button.addEventListener('click', () => openChoices(i));
       $('sentence').append(button);
     });
   }
@@ -251,15 +312,20 @@
     renderSentence();
     $('choices-panel').hidden = false;
     $('choices').replaceChildren();
-    $('feedback').textContent = 'Choisis le sens demandé par la petite mission.';
     shuffle(phrase()[i + 1].options).forEach(option => {
       const button = document.createElement('button');
       button.className = 'choice';
-      button.textContent = option;
+      addPicture(button, optionPicture(option, i));
+      const label = document.createElement('span');
+      label.className = 'answer-label';
+      label.textContent = option;
+      button.append(label);
+      const result = document.createElement('span');
+      result.className = 'answer-result';
+      button.append(result);
       button.addEventListener('click', () => answer(i, option, button));
       $('choices').append(button);
     });
-    $('choices').firstElementChild.focus({ preventScroll: true });
   }
 
   function answer(i, option, button) {
@@ -269,7 +335,7 @@
     if (!correct) {
       mistakes++; phraseMistakes++;
       button.classList.add('wrong');
-      button.textContent = `${option} ✗`;
+      button.querySelector('.answer-result').textContent = '✗ Réessaie';
       button.disabled = true;
       document.querySelector(`[data-gap="${i}"]`).classList.add('wrong');
       const preview = phrase()[0].replace(`{${i}}`, () => option);
@@ -283,7 +349,9 @@
     }
     solved.add(i);
     renderSentence();
-    $('choices-panel').hidden = true;
+    button.classList.add('correct');
+    button.querySelector('.answer-result').textContent = '✓ Bravo !';
+    [...$('choices').children].forEach(choice => { choice.disabled = true; });
     if (solved.size === phrase().length - 1) {
       history.push({ ...scene() });
       illustrate('success', scene().souvenir);
@@ -298,7 +366,8 @@
       $('next').focus({ preventScroll: true });
     } else {
       $('feedback').textContent = '✓ Bien joué ! Complète le mot suivant.';
-      document.querySelector('.gap:not(:disabled)').focus({ preventScroll: true });
+      openChoices(i + 1);
+      $('choices').firstElementChild.focus({ preventScroll: true });
     }
   }
 
@@ -308,7 +377,7 @@
     document.querySelector('.exercise').hidden = false;
     $('choices-panel').hidden = true; $('next').hidden = true;
     $('choices').replaceChildren();
-    $('feedback').textContent = 'Touche les pointillés. Attention : les autres choix racontent une autre histoire !';
+    $('feedback').textContent = 'Choisis une carte pour aider Pipo !';
     $('clue').textContent = `Ta mission : ${phrase()[1].clue}`;
     $('story-title').textContent = `${levels[levelIndex].name} · ${levels[levelIndex].title}`;
     $('story-intro').textContent = levels[levelIndex].intro;
@@ -321,13 +390,14 @@
     $('success-count').textContent = `${phraseIndex} / 10 réussies`;
     $('progress').value = phraseIndex;
     renderSentence();
+    openChoices(0);
   }
 
   function startLevel(index, focus = true) {
     levelIndex = index; phraseIndex = 0; mistakes = 0; firstTry = 0; history = [];
     [...$('levels').children].forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
     showPhrase();
-    if (focus) document.querySelector('.gap').focus({ preventScroll: true });
+    if (focus) $('choices').firstElementChild.focus({ preventScroll: true });
   }
 
   levels.forEach((level, i) => {
@@ -341,7 +411,7 @@
     if (solved.size !== phrase().length - 1 || history.length !== phraseIndex + 1) return;
     if (phraseIndex < 9) {
       phraseIndex++; showPhrase();
-      document.querySelector('.gap').focus({ preventScroll: true });
+      $('choices').firstElementChild.focus({ preventScroll: true });
       return;
     }
     document.querySelector('.exercise').hidden = true;
