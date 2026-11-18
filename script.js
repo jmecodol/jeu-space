@@ -283,14 +283,7 @@
     } catch { /* Le retour écrit reste disponible sans audio. */ }
   }
 
-  function shuffle(options) {
-    const result = [...options];
-    for (let i = result.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [result[i], result[j]] = [result[j], result[i]];
-    }
-    return result;
-  }
+  const normalize = text => text.normalize('NFC').toLocaleLowerCase('fr').replace(/[’‘]/g, "'").trim().replace(/\s+/g, ' ').replace(/\s+([!?.,;:])/g, '$1');
 
   function renderSentence() {
     const [text, ...gaps] = phrase();
@@ -302,56 +295,50 @@
       button.className = `gap${solved.has(i) ? ' solved' : ''}`;
       button.textContent = solved.has(i) ? `${gaps[i].answer} ✓` : 'quel mot ?';
       button.dataset.gap = i;
-      button.setAttribute('aria-label', solved.has(i) ? `${gaps[i].answer}, bonne réponse` : `Choisir le mot manquant ${i + 1}`);
+      button.setAttribute('aria-label', solved.has(i) ? `${gaps[i].answer}, bonne réponse` : `Mot manquant ${i + 1} à écrire ci-dessous`);
       $('sentence').append(button);
     });
   }
 
-  function openChoices(i) {
+  function prepareInput(i) {
     activeGap = i;
     renderSentence();
-    $('choices-panel').hidden = false;
-    $('choices').replaceChildren();
-    shuffle(phrase()[i + 1].options).forEach(option => {
-      const button = document.createElement('button');
-      button.className = 'choice';
-      addPicture(button, optionPicture(option, i));
-      const label = document.createElement('span');
-      label.className = 'answer-label';
-      label.textContent = option;
-      button.append(label);
-      const result = document.createElement('span');
-      result.className = 'answer-result';
-      button.append(result);
-      button.addEventListener('click', () => answer(i, option, button));
-      $('choices').append(button);
-    });
+    $('answer-input').value = '';
+    $('answer-input').disabled = false;
+    $('answer-input').removeAttribute('aria-invalid');
+    $('submit-answer').disabled = false;
+    $('answer-form').classList.remove('wrong', 'correct');
+    $('answer-picture').replaceChildren();
+    addPicture($('answer-picture'), optionPicture(phrase()[i + 1].answer, i));
   }
 
-  function answer(i, option, button) {
+  function answer(i, option) {
     if (solved.has(i)) return;
-    const correct = option === phrase()[i + 1].answer;
+    const correct = normalize(option) === normalize(phrase()[i + 1].answer);
     tone(correct);
     if (!correct) {
       mistakes++; phraseMistakes++;
-      button.classList.add('wrong');
-      button.querySelector('.answer-result').textContent = '✗ Réessaie';
-      button.disabled = true;
+      $('answer-form').classList.add('wrong');
+      $('answer-input').value = '';
+      $('answer-input').setAttribute('aria-invalid', 'true');
       document.querySelector(`[data-gap="${i}"]`).classList.add('wrong');
       const preview = phrase()[0].replace(`{${i}}`, () => option);
-      const mishap = phrase()[i + 1].jokes[option];
+      const known = phrase()[i + 1].options.find(word => normalize(word) === normalize(option));
+      const mishap = phrase()[i + 1].jokes[known] || 'Pipo a mélangé ses lettres : son sac se met à faire des bulles !';
       illustrate('mishap', option);
       $('story-state').textContent = `Petit détour farfelu ! ${mishap} Rien de grave : aide Pipo à réparer ce tour de magie.`;
-      $('feedback').textContent = `✗ Avec ce choix : « ${preview} »\n${mishap}\nRéessaie : le bon mot permettra à Pipo de continuer.`;
-      const next = [...$('choices').children].find(choice => !choice.disabled);
-      if (next) next.focus({ preventScroll: true });
+      $('feedback').textContent = `✗ Recommence !\nTu as écrit : « ${preview} »\n${mishap}\nAstuce : ${phrase()[i + 1].rule}`;
+      $('answer-input').focus({ preventScroll: true });
       return;
     }
     solved.add(i);
     renderSentence();
-    button.classList.add('correct');
-    button.querySelector('.answer-result').textContent = '✓ Bravo !';
-    [...$('choices').children].forEach(choice => { choice.disabled = true; });
+    $('answer-form').classList.remove('wrong');
+    $('answer-form').classList.add('correct');
+    $('answer-input').removeAttribute('aria-invalid');
+    $('answer-input').value = phrase()[i + 1].answer;
+    $('answer-input').disabled = true;
+    $('submit-answer').disabled = true;
     if (solved.size === phrase().length - 1) {
       history.push({ ...scene() });
       illustrate('success', scene().souvenir);
@@ -366,8 +353,8 @@
       $('next').focus({ preventScroll: true });
     } else {
       $('feedback').textContent = '✓ Bien joué ! Complète le mot suivant.';
-      openChoices(i + 1);
-      $('choices').firstElementChild.focus({ preventScroll: true });
+      prepareInput(i + 1);
+      $('answer-input').focus({ preventScroll: true });
     }
   }
 
@@ -375,9 +362,8 @@
     solved = new Set(); activeGap = null; phraseMistakes = 0;
     $('complete').hidden = true;
     document.querySelector('.exercise').hidden = false;
-    $('choices-panel').hidden = true; $('next').hidden = true;
-    $('choices').replaceChildren();
-    $('feedback').textContent = 'Choisis une carte pour aider Pipo !';
+    $('next').hidden = true;
+    $('feedback').textContent = 'Écris ta réponse, puis appuie sur Valider ou Entrée.';
     $('clue').textContent = `Ta mission : ${phrase()[1].clue}`;
     $('story-title').textContent = `${levels[levelIndex].name} · ${levels[levelIndex].title}`;
     $('story-intro').textContent = levels[levelIndex].intro;
@@ -390,14 +376,14 @@
     $('success-count').textContent = `${phraseIndex} / 10 réussies`;
     $('progress').value = phraseIndex;
     renderSentence();
-    openChoices(0);
+    prepareInput(0);
   }
 
   function startLevel(index, focus = true) {
     levelIndex = index; phraseIndex = 0; mistakes = 0; firstTry = 0; history = [];
     [...$('levels').children].forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
     showPhrase();
-    if (focus) $('choices').firstElementChild.focus({ preventScroll: true });
+    if (focus) $('answer-input').focus({ preventScroll: true });
   }
 
   levels.forEach((level, i) => {
@@ -407,11 +393,26 @@
     button.addEventListener('click', () => startLevel(i));
     $('levels').append(button);
   });
+  $('answer-form').addEventListener('submit', event => {
+    event.preventDefault();
+    if (activeGap === null || solved.has(activeGap)) return;
+    const value = $('answer-input').value.trim();
+    if (!value) {
+      $('feedback').textContent = 'Écris un mot avant de valider.';
+      $('answer-input').focus({ preventScroll: true });
+      return;
+    }
+    answer(activeGap, value);
+  });
+  $('answer-input').addEventListener('input', () => {
+    $('answer-input').removeAttribute('aria-invalid');
+    $('answer-form').classList.remove('wrong');
+  });
   $('next').addEventListener('click', () => {
     if (solved.size !== phrase().length - 1 || history.length !== phraseIndex + 1) return;
     if (phraseIndex < 9) {
       phraseIndex++; showPhrase();
-      $('choices').firstElementChild.focus({ preventScroll: true });
+      $('answer-input').focus({ preventScroll: true });
       return;
     }
     document.querySelector('.exercise').hidden = true;

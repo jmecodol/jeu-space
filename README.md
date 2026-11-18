@@ -35,34 +35,36 @@ Le dénouement apparaît après la dernière étape. Les niveaux restent accessi
 librement pour choisir la difficulté ; changer ou recommencer efface le carnet,
 sans sauvegarde entre deux visites.
 
-1. Lisez la **mission** : elle indique le sens à retrouver, car plusieurs choix
-   peuvent être du français correct mais raconter une autre histoire.
-2. Les trois **cartes-réponses illustrées sont immédiatement visibles sous la phrase** :
-   touchez directement celle qui convient. Il n’y a plus de menu à ouvrir sur les pointillés.
-   Le trou « quel mot ? » est un simple repère visuel, pas un bouton.
-3. Une erreur devient rouge avec une croix et un son grave. La phrase obtenue
-   est montrée avec une explication amusante du contresens ; réessayez.
-4. Une bonne réponse complète la phrase en vert avec une coche et un son aigu.
-   Une astuce explique la différence à retenir.
+1. Lisez la **mission** et la phrase à compléter.
+2. **Écrivez la réponse** dans le champ sous la phrase, puis utilisez **Valider**
+   ou **Entrée**. Sur téléphone ou tablette, toucher le champ ouvre le clavier natif.
+   Certaines étapes attendent plusieurs mots ou une réplique avec sa ponctuation.
+3. En cas d’erreur, la saisie est entièrement effacée, le champ devient rouge et
+   le jeu affiche **« Recommence ! »** avec un son grave et une astuce.
+   Le carnet, l’étape actuelle et les réussites précédentes sont conservés.
+4. Une bonne réponse affiche **« Bravo ! »**, complète la phrase en vert et joue
+   un son aigu. La réponse est verrouillée et la suite de l’histoire devient accessible.
 5. Passez à la phrase suivante, puis consultez le bilan des dix phrases.
 
-Chaque réponse, correcte ou non, possède son propre pictogramme correspondant à
-l’objet ou à l’action. Les objets sans emoji approprié (râteau, moule, corne, table,
-banc, tapis, dé à coudre, flûte et vis) sont dessinés en SVG local. Les phrases et
-notions abstraites combinent de petits symboles pour illustrer leur sens ; le texte
-reste toujours affiché et fournit le nom accessible du bouton. Les images restent
-attachées aux réponses après mélange et en cas d’erreur. Le rendu des emojis
-peut varier selon l’appareil.
+Une illustration de l’objet ou de l’action attendus reste affichée comme indice,
+sans révéler le mot écrit. Les images sont des emojis ou des dessins SVG locaux.
+Les contresens connus déclenchent leur mésaventure personnalisée ; les autres fautes
+provoquent une petite mésaventure de bulles. Le rendu des emojis peut varier selon l’appareil.
 
-Sur ordinateur, Pipo apparaît à côté de l’exercice ; sur téléphone, les réponses
-forment trois grandes cartes verticales. L’introduction et le carnet se déplient
+Les majuscules, espaces superflus et formes typographiques d’apostrophes sont tolérés.
+Les accents, lettres, mots et signes de ponctuation attendus doivent être corrects.
+Une saisie vide ne compte pas comme erreur. La correction automatique et les
+suggestions orthographiques sont désactivées lorsque le navigateur le permet.
+
+Sur ordinateur, Pipo apparaît à côté de l’exercice ; sur téléphone, le champ et le
+bouton Valider s’empilent. L’introduction et le carnet se déplient
 seulement si souhaité pour laisser la place à la question.
 
 Les phrases ne sont pas lues à haute voix : c’est une dictée à trous visuelle.
 Les pièges mêlent orthographe et compréhension : « plan / plant »,
 « petits pois / petits poids », « bientôt / bien tôt », les virgules d’appel
 comme « Nino, apporte la corde ! » et les négations.
-Tous les mauvais choix changent le sens ou produisent une image absurde ;
+Les contresens prévus changent l’histoire ou produisent une image absurde ;
 ils ne sont pas tous des contraires exacts, ni tous des fautes d’orthographe.
 Les sons sont synthétisés localement et peuvent être coupés. Si le navigateur
 ne permet pas l’audio, tous les retours restent lisibles. Tab et Entrée permettent
