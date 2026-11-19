@@ -10,25 +10,34 @@ Choisissez votre niveau et **additions**, **soustractions**, **multiplications**
 ou **mélange**. Chaque nouvelle série propose dix calculs aléatoires, avec des
 plafonds de nombres qui augmentent au fil de la série. Changer de niveau ou de
 type de calcul recommence une nouvelle série.
+Le jeu s’ouvre sur le CE2, à titre de point de départ pour un enfant de huit ans ;
+les cinq niveaux restent accessibles dans le volet « 🎒 … Changer », replié pour
+laisser la place au jeu. Les tirages évitent les tout petits opérandes
+dans les niveaux avancés. Les séries de multiplication et les mélanges proposent
+aussi des produits par 10 (CE1/CE2) ou par des dizaines entières (CM1/CM2).
 
-Les opérations sont **posées verticalement sur une grille**, avec unités,
-dizaines, centaines, milliers, etc. alignés :
+Un **grand calcul en ligne**, un renard-guide et trois consignes illustrées
+indiquent les actions. Aucun clavier natif ni chronomètre :
 
-1. Touchez une case du résultat (ou d’un produit intermédiaire).
+1. Regardez le calcul. La première case de « Ma réponse » est déjà sélectionnée :
+   une flèche et une bordure la signalent, pas seulement une couleur.
 2. Touchez un chiffre **0 à 9** sur le pavé numérique toujours visible.
-3. Sélectionnez vous-même la prochaine case, en calculant de droite à gauche.
-4. Utilisez **Effacer cette case** pour corriger, puis **Vérifier**.
+3. Écrivez le résultat **de gauche à droite**, comme un nombre habituel.
+   La sélection avance automatiquement vers la prochaine case vide à droite.
+4. Touchez une case pour la corriger ou l’effacer, puis **Vérifier ma réponse**.
+   Un message invite à vérifier lorsque toutes les cases sont remplies.
 5. Une erreur colore la ligne en rouge et affiche « Recommence ». La saisie
    reste disponible pour la corriger. Une réussite affiche « Bravo », joue un
    son aigu et débloque le calcul suivant.
 
-Les petites cases au-dessus de l’opération servent de **brouillon de retenues
+Le volet facultatif **« Besoin d’aide ? Pose ton calcul ici »** montre une opération
+alignée en colonnes, avec unités, dizaines et centaines. Les petites cases
+au-dessus de l’opération servent de **brouillon de retenues
 ou d’emprunts**, saisissable avec le même pavé. Elles ne sont pas évaluées et
 ne constituent pas une démonstration automatique de la méthode. Pour les
-multiplications par deux chiffres, remplissez les deux produits intermédiaires
-(dont la ligne des dizaines avec son zéro de décalage), puis leur somme.
-Les lignes de calcul sont vérifiées ; les zéros en tête peuvent rester vides.
-Une case vide au milieu ou à droite n’est pas acceptée.
+multiplications par deux chiffres, les deux produits intermédiaires sont affichés
+dans l’aide pour guider l’addition finale. Seul le résultat dans « Ma réponse »
+est évalué ; toutes ses cases doivent être remplies.
 
 ### Difficultés
 

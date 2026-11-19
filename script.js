@@ -5,13 +5,13 @@
   const levels = [
     { name: 'CP', description: 'Petits nombres jusqu’à 20. Multiplications de découverte par 2, sous forme de groupes.', add: [9, 10], sub: [19, 9], multiply: [5, 2] },
     { name: 'CE1', description: 'Nombres à deux chiffres, additions avec retenue, soustractions et premières tables.', add: [89, 89], sub: [99, 89], multiply: [10, 5] },
-    { name: 'CE2', description: 'Nombres à trois chiffres, emprunts et multiplications par un chiffre.', add: [899, 899], sub: [999, 899], multiply: [99, 9] },
+    { name: 'CE2', description: 'Nombres à trois chiffres, emprunts et multiplications par un chiffre ou par 10.', add: [899, 899], sub: [999, 899], multiply: [99, 9] },
     { name: 'CM1', description: 'Nombres à quatre chiffres et multiplications posées par deux chiffres.', add: [8999, 8999], sub: [9999, 8999], multiply: [299, 29] },
     { name: 'CM2', description: 'Grands nombres, emprunts successifs et multiplications par deux chiffres.', add: [89999, 89999], sub: [99999, 89999], multiply: [999, 99] }
   ];
   const places = ['unités', 'dizaines', 'centaines', 'milliers', 'dizaines de milliers', 'centaines de milliers'];
   const headings = ['U', 'D', 'C', 'M', 'DM', 'CM'];
-  let levelIndex = 0, operation = 'mixed', exercises = [], index = 0;
+  let levelIndex = 2, operation = 'mixed', exercises = [], index = 0;
   let rows = [], notes = [], selected = null, solved = false, mistakes = 0, clean = 0, attemptErrors = 0;
   let sound = true, audio = null;
   const random = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
@@ -42,10 +42,16 @@
     const level = levels[levelIndex];
     return Array.from({ length: 10 }, (_, i) => {
       const kind = operation === 'mixed' ? ['+', '-', '×'][i % 3] : operation;
-      const scale = .35 + i / 9 * .65;
+      const scale = .65 + i / 9 * .35;
       const range = kind === '+' ? level.add : kind === '-' ? level.sub : level.multiply;
-      let a = random(1, Math.max(2, Math.floor(range[0] * scale)));
-      let b = random(1, Math.max(2, Math.floor(range[1] * scale)));
+      const maxA = Math.max(2, Math.floor(range[0] * scale));
+      const maxB = Math.max(2, Math.floor(range[1] * scale));
+      let a = random(Math.max(2, Math.floor(maxA / 2)), maxA);
+      let b = random(Math.max(2, Math.floor(maxB / 2)), maxB);
+      if (kind === '×' && levelIndex > 0 && i % 3 === 2) {
+        a = random(4, levelIndex === 1 ? 9 : 12 * levelIndex);
+        b = levelIndex < 3 ? 10 : 10 * random(2, 9);
+      }
       if (kind === '-' && b > a) [a, b] = [b, a];
       if (kind === '×' && levelIndex === 0) b = 2;
       return { a, b, kind, result: kind === '+' ? a + b : kind === '-' ? a - b : a * b };
@@ -55,7 +61,10 @@
   function select(cell) {
     selected = cell;
     document.querySelectorAll('.digit').forEach(button => button.setAttribute('aria-pressed', String(button === cell.button)));
-    $('selection').textContent = `${cell.label} : choisis un chiffre.`;
+    $('selection').textContent = `👇 ${cell.label} : touche un chiffre ci-dessous.`;
+    $('coach').textContent = cell.button.classList.contains('note')
+      ? '🦊 Tu notes une retenue. Ensuite, touche une case de « Ma réponse ».'
+      : '🦊 À toi ! Tape ta réponse avec les gros chiffres. La case suivante se choisit toute seule.';
   }
 
   function addText(text, className = '') {
@@ -79,9 +88,9 @@
     const cells = [];
     const caption = document.createElement('span');
     caption.className = 'row-label';
-    caption.textContent = expected === null ? 'Retenues / emprunts · brouillon' : label;
-    $('calculation').append(caption);
-    addText(expected === null ? '✎' : '=');
+    caption.textContent = 'Retenues / emprunts · brouillon';
+    const target = expected === null ? $('calculation') : $('answer');
+    if (expected === null) { target.append(caption); addText('✎'); }
     for (let column = 0; column < columns; column++) {
       const place = columns - column - 1, button = document.createElement('button');
       const cell = { button, value: '', label: `${label}, ${places[place]}` };
@@ -91,7 +100,7 @@
       button.setAttribute('aria-pressed', 'false');
       button.addEventListener('click', () => { if (!solved) select(cell); });
       cell.placeholder = button.textContent;
-      $('calculation').append(button); cells.push(cell);
+      target.append(button); cells.push(cell);
     }
     if (expected !== null) rows.push({ cells, expected, label });
     return cells;
@@ -108,11 +117,15 @@
     const ex = current(), columns = Math.max(String(ex.a).length, String(ex.b).length, String(ex.result).length);
     rows = []; notes = []; selected = null; solved = false; attemptErrors = 0;
     $('exercise').hidden = false; $('complete').hidden = true; $('next').hidden = true;
+    $('check').classList.remove('ready');
     $('position').textContent = `${levels[levelIndex].name} · Calcul ${index + 1} sur 10`;
     $('score').textContent = `${index} / 10 réussis`;
     $('progress').value = index;
-    $('question').textContent = `${ex.a} ${ex.kind} ${ex.b} = ?`;
-    $('feedback').textContent = 'Touche une case, choisis son chiffre, puis vérifie ton calcul.';
+    $('question').textContent = `${ex.a} ${ex.kind} ${ex.b} = …`;
+    $('feedback').textContent = '👆 Utilise les gros chiffres pour écrire ta réponse.';
+    $('feedback').className = '';
+    $('answer').replaceChildren();
+    $('posed').open = false;
     $('calculation').replaceChildren();
     $('calculation').style.setProperty('--columns', columns);
     addText('');
@@ -126,16 +139,16 @@
     addNumber(ex.b, columns, ex.kind);
     line();
     if (ex.kind === '×' && ex.b >= 10) {
-      makeCells(columns, 'Produit par les unités', ex.a * (ex.b % 10));
-      makeCells(columns, 'Produit par les dizaines, zéro de décalage compris', ex.a * Math.floor(ex.b / 10) * 10);
+      addNumber(ex.a * (ex.b % 10), columns, '+');
+      addNumber(ex.a * Math.floor(ex.b / 10) * 10, columns, '+');
       line();
     }
-    makeCells(columns, 'Résultat', ex.result);
+    makeCells(String(ex.result).length, 'Ma réponse', ex.result);
     $('method').textContent = ex.kind === '×'
-      ? ex.b >= 10 ? 'Multiplie par les unités, puis par les dizaines (termine cette ligne par 0). Additionne les deux lignes.' : levelIndex === 0 ? `Imagine ${ex.b} groupes de ${ex.a} objets. Combien d’objets en tout ?` : 'Multiplie de droite à gauche. Les petites cases servent à noter tes retenues.'
+      ? ex.b >= 10 ? 'Les deux lignes sous le trait décomposent la multiplication : le produit par les unités, puis par les dizaines. Additionne-les pour trouver ta réponse.' : levelIndex === 0 ? `Imagine ${ex.b} groupes de ${ex.a} objets. Combien d’objets en tout ?` : 'Multiplie de droite à gauche. Les petites cases servent à noter tes retenues.'
       : ex.kind === '+' ? 'Additionne les unités, puis les dizaines et les autres colonnes. À partir de 10, reporte une retenue à gauche.' : 'Soustrais de droite à gauche. Si nécessaire, échange une dizaine de gauche contre 10 unités.';
     setEnabled(true);
-    select(rows[0].cells[columns - 1]);
+    select(rows[0].cells[0]);
   }
 
   function start() {
@@ -143,6 +156,7 @@
     [...$('levels').children].forEach((button, i) => button.setAttribute('aria-pressed', String(i === levelIndex)));
     document.querySelectorAll('[data-operation]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.operation === operation)));
     $('level-info').textContent = levels[levelIndex].description;
+    $('settings-label').textContent = `🎒 ${levels[levelIndex].name} · ${operation === 'mixed' ? 'Mélange' : operation === '+' ? 'Additions' : operation === '-' ? 'Soustractions' : 'Multiplications'} · Changer`;
     show();
   }
 
@@ -151,17 +165,25 @@
     selected.value = value;
     selected.button.textContent = value === '' ? selected.placeholder : value;
     selected.button.setAttribute('aria-label', `${selected.label}, ${value === '' ? 'vide' : value}`);
-    selected.button.classList.remove('wrong');
-    $('feedback').textContent = 'Continue, puis touche Vérifier quand tu as terminé.';
-    // On garde la case active : l’enfant choisit lui-même sa prochaine colonne.
+    selected.button.classList.remove('wrong', 'correct');
+    $('feedback').className = '';
+    const cells = rows[0].cells;
+    if (value !== '' && !selected.button.classList.contains('note')) {
+      const next = cells.slice(cells.indexOf(selected) + 1).find(cell => cell.value === '');
+      if (next) select(next);
+    }
+    const ready = cells.every(cell => cell.value !== '');
+    $('check').classList.toggle('ready', ready);
+    $('feedback').textContent = ready ? '✅ Ta réponse est prête ! Touche le bouton vert « Vérifier ».' : '👆 Continue à taper les chiffres de ta réponse.';
+    if (ready) $('coach').textContent = '🦊 Maintenant, à toi de vérifier ! Touche le grand bouton vert.';
   }
 
   function check() {
     if (solved) return;
-    const unfinished = rows.find(row => row.cells.every(cell => cell.value === ''));
+    const unfinished = rows.find(row => row.cells.some(cell => cell.value === ''));
     if (unfinished) {
       $('feedback').textContent = `Complète la ligne « ${unfinished.label} » avant de vérifier.`;
-      select(unfinished.cells[unfinished.cells.length - 1]); return;
+      select(unfinished.cells.find(cell => cell.value === '')); return;
     }
     let incorrect = null;
     rows.forEach(row => {
@@ -173,14 +195,19 @@
     });
     if (incorrect) {
       mistakes++; attemptErrors++; tone(false);
-      $('feedback').textContent = `✗ Recommence ! Vérifie la ligne « ${incorrect.label} », en partant de la droite. Tes chiffres et tes retenues restent en place pour les corriger.`;
-      select(incorrect.cells[incorrect.cells.length - 1]); return;
+      $('feedback').className = 'error-message';
+      $('feedback').textContent = '✗ Recommence ! Touche la case à corriger, puis le bon chiffre. Tu peux ouvrir « Besoin d’aide ? ».';
+      select(incorrect.cells[0]);
+      $('coach').textContent = '🦊 Ce n’est pas grave ! Essaie encore, tu peux y arriver.'; return;
     }
     solved = true; if (!attemptErrors) clean++;
     tone(true); setEnabled(false);
+    $('check').classList.remove('ready');
+    $('coach').textContent = '🦊 Bravo ! Tu as trouvé ! Prêt pour le prochain défi ?';
     $('score').textContent = `${index + 1} / 10 réussis`; $('progress').value = index + 1;
     $('selection').textContent = '✓ Calcul réussi !';
     $('feedback').textContent = `✓ Bravo ! ${current().a} ${current().kind} ${current().b} = ${current().result}`;
+    $('feedback').className = 'success-message';
     $('next').hidden = false; $('next').textContent = index === 9 ? 'Voir mon résultat ★' : 'Calcul suivant →';
     $('next').focus({ preventScroll: true });
   }
@@ -197,6 +224,11 @@
     button.addEventListener('click', () => write(String(digit))); $('keypad').append(button);
   });
   $('erase').addEventListener('click', () => write(''));
+  $('posed').addEventListener('toggle', () => {
+    if (!$('posed').open && !solved && selected?.button.classList.contains('note')) {
+      select(rows[0].cells.find(cell => cell.value === '') || rows[0].cells[0]);
+    }
+  });
   $('check').addEventListener('click', check);
   $('next').addEventListener('click', () => {
     if (!solved) return;
@@ -218,7 +250,7 @@
     if (/^\d$/.test(event.key)) { event.preventDefault(); write(event.key); }
     else if (event.key === 'Backspace' || event.key === 'Delete') { event.preventDefault(); write(''); }
     else if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && selected) {
-      const cells = [...notes, ...rows.flatMap(row => row.cells)], i = cells.indexOf(selected);
+      const cells = [...($('posed').open ? notes : []), ...rows.flatMap(row => row.cells)], i = cells.indexOf(selected);
       const next = cells[i + (event.key === 'ArrowLeft' ? -1 : 1)];
       if (next) { event.preventDefault(); select(next); next.button.focus({ preventScroll: true }); }
     }

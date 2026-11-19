@@ -1,4 +1,4 @@
-:root { font-family: system-ui, sans-serif; color: #233f44; background: #f5f4ed; }
+:root { font-family: system-ui, sans-serif; color: #233f44; background: #eff5ff; }
 * { box-sizing: border-box; }
 body { margin: 0; }
 header { max-width: 1080px; margin: auto; padding: 18px; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-weight: 800; }
@@ -17,6 +17,20 @@ button[aria-pressed="true"], .primary { background: #246761; border-color: #2467
 .primary:hover:not(:disabled) { background: #174e49; color: white; }
 .card { background: white; border: 1px solid #d5dfd9; border-radius: 24px; padding: clamp(16px, 4vw, 32px); box-shadow: 0 7px 0 #e1e6dc; }
 .stats { display: flex; justify-content: space-between; gap: 10px; font-size: .9rem; font-weight: 700; }
+.steps { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; padding: 0; list-style: none; }
+.steps li { background: #fff; padding: 12px; border: 2px solid #b5cbed; border-radius: 16px; }
+.settings { background: white; border: 2px solid #b5cbed; border-radius: 16px; padding: 0 14px; margin: 16px 0; }
+.settings > summary { font-size: 1rem; font-weight: 750; }
+#question { font-size: clamp(2rem, 7vw, 3.8rem); margin: 18px 0; color: #273f87; overflow-wrap: anywhere; }
+.coach { background: #fff3cc; border: 2px solid #c29937; border-radius: 16px; padding: 14px; font-weight: 750; line-height: 1.5; }
+.answer-title { font-size: 1.2rem; font-weight: 800; }
+.answer { display: flex; justify-content: center; gap: 8px; padding: 28px 0 10px; }
+.answer .digit { position: relative; flex: 0 1 58px; min-height: 68px; font-size: 2.2rem; border-width: 3px; }
+.answer .digit[aria-pressed="true"] { outline: 3px solid #906108; outline-offset: 3px; }
+.answer .digit[aria-pressed="true"]::before { content: '↓'; position: absolute; top: -34px; left: 0; width: 100%; color: #744700; font-size: 1.5rem; }
+.success-message { color: #235a3d; background: #def4e5; border-radius: 12px; padding: 12px; }
+.error-message { color: #912525; background: #ffe4e4; border-radius: 12px; padding: 12px; }
+#check.ready { outline: 4px solid #e8b531; outline-offset: 3px; }
 progress { display: block; width: 100%; height: 10px; margin: 15px 0; accent-color: #246761; }
 .workspace { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 32px; align-items: start; }
 .grid-scroll { overflow-x: auto; padding: 8px; }
@@ -36,7 +50,7 @@ summary { cursor: pointer; padding: 10px 0; }
 .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .keypad button { font-size: 1.7rem; font-weight: 750; min-height: 56px; padding: 5px; }
 .keypad button:last-child { grid-column: 2; }
-#keypad-panel { padding: 12px; background: #f0f5f4; border-radius: 18px; }
+#keypad-panel { padding: 16px; background: #e9f1ff; border: 2px solid #9db8dd; border-radius: 18px; }
 #selection { min-height: 2.5em; margin: 2px 0 10px; font-size: .9rem; }
 #erase, #check { width: 100%; margin-top: 10px; }
 #feedback { min-height: 3em; font-weight: 750; line-height: 1.7; white-space: pre-line; }
@@ -54,5 +68,10 @@ footer { text-align: center; padding: 0 15px 24px; color: #4b6468; }
   .cell { font-size: 1.5rem; }
   .heading { font-size: .65rem; }
   .note { font-size: 1rem; }
+  h1 { margin: 10px 0; }
+  .steps { gap: 5px; font-size: .8rem; }
+  .steps li { flex: 1; min-width: 80px; padding: 8px 4px; }
+  .answer { gap: 5px; }
+  .answer .digit { min-height: 58px; font-size: 1.8rem; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }

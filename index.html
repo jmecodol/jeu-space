@@ -12,8 +12,15 @@
 <body>
   <header><span>🧮 Les petits champions du calcul</span><button id="sound" aria-pressed="true">Son : activé</button></header>
   <main>
-    <h1>À toi de poser les bons chiffres !</h1>
-    <p class="intro">Choisis une case, puis touche un chiffre. Commence par les unités, à droite !</p>
+    <h1>🦊 À toi de jouer, champion !</h1>
+    <p class="intro">Un calcul, une réponse : le renard te montre quoi faire.</p>
+    <ol class="steps" aria-label="Comment jouer">
+      <li>👀 <strong>1. Regarde le calcul</strong></li>
+      <li>👆 <strong>2. Tape les chiffres de ta réponse</strong></li>
+      <li>✅ <strong>3. Touche « Vérifier »</strong></li>
+    </ol>
+    <details class="settings">
+    <summary id="settings-label">🎒 Choisir mon niveau et mon calcul</summary>
     <nav id="levels" aria-label="Niveau scolaire"></nav>
     <fieldset class="operations"><legend>Quel calcul veux-tu faire ?</legend>
       <button data-operation="mixed" aria-pressed="true">🎲 Mélange</button>
@@ -22,24 +29,28 @@
       <button data-operation="×" aria-pressed="false">× Multiplications</button>
     </fieldset>
     <p id="level-info" class="intro"></p>
+    </details>
     <section id="exercise" class="card" aria-label="Exercice de calcul">
       <div class="stats"><span id="position"></span><span id="score"></span></div>
       <progress id="progress" max="10" value="0" aria-label="Calculs réussis"></progress>
       <h2 id="question"></h2>
+      <p id="coach" class="coach" role="status"></p>
       <div class="workspace">
         <div>
-          <div class="grid-scroll"><div id="calculation" class="calculation" role="group" aria-label="Opération posée en colonnes"></div></div>
-          <p id="method" class="method"></p>
-          <details><summary>Comment utiliser les retenues ?</summary>
-            <p>Les petites cases au-dessus sont un brouillon libre. Tu peux y noter les retenues d’une addition ou d’une multiplication, ou les emprunts d’une soustraction. Elles ne sont pas notées.</p>
-            <p>Pour une soustraction, tu peux emprunter une dizaine à la colonne de gauche : elle vaut 10 unités dans la colonne de droite. Pour multiplier par deux chiffres, calcule une ligne par chiffre, puis additionne les lignes.</p>
+          <p class="answer-title">✏️ Ma réponse <span class="small">(de gauche à droite)</span></p>
+          <div id="answer" class="answer" role="group" aria-label="Chiffres de ma réponse"></div>
+          <p class="small">La case marquée ↓ attend ton chiffre. Tu peux toucher une autre case pour la corriger.</p>
+          <details id="posed"><summary>🧮 Besoin d’aide ? Pose ton calcul ici</summary>
+            <div class="grid-scroll"><div id="calculation" class="calculation" role="group" aria-label="Opération posée en colonnes"></div></div>
+            <p id="method" class="method"></p>
+            <p>Les petites cases servent uniquement de brouillon pour tes retenues ou tes emprunts. Elles ne sont pas notées. Le résultat se remplit dans « Ma réponse ».</p>
           </details>
         </div>
         <section id="keypad-panel" aria-label="Pavé numérique">
           <p id="selection" role="status">Choisis une case du résultat.</p>
           <div id="keypad" class="keypad" role="group" aria-label="Chiffres de zéro à neuf"></div>
           <button id="erase">⌫ Effacer cette case</button>
-          <button id="check" class="primary">Vérifier ✓</button>
+          <button id="check" class="primary">3. Vérifier ma réponse ✓</button>
         </section>
       </div>
       <p id="feedback" role="status" aria-live="polite" aria-atomic="true"></p>
