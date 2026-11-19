@@ -1,80 +1,60 @@
-# Les dictées rigolotes
+# Les petits champions du calcul
 
-Jeu d’orthographe en français, sans dépendance, backend ni ressource externe.
-Il remplace l’ancien jeu spatial. Les 50 phrases mettent en scène des dragons,
-des lutins et des situations absurdes pour mémoriser les différences de sens.
+Jeu de mathématiques en français, du **CP au CM2**, qui remplace les dictées.
+HTML, CSS et JavaScript natifs, sans dépendance, backend ni ressource externe.
 
 ## Jouer
 
-Ouvrez `index.html` dans un navigateur récent, sur ordinateur, téléphone ou tablette.
-Choisissez **CP, CE1, CE2, CM1 ou CM2** : chaque niveau propose **10 phrases**,
-ordonnées des mots courants vers les homophones, les espaces, la ponctuation et
-les négations qui changent le sens d’une phrase.
-Les niveaux sont indicatifs et librement accessibles, sans évaluation scolaire officielle.
+Ouvrez `index.html` dans un navigateur récent sur ordinateur, téléphone ou tablette.
+Choisissez votre niveau et **additions**, **soustractions**, **multiplications**
+ou **mélange**. Chaque nouvelle série propose dix calculs aléatoires, avec des
+plafonds de nombres qui augmentent au fil de la série. Changer de niveau ou de
+type de calcul recommence une nouvelle série.
 
-### Une histoire à suivre avec Pipo
+Les opérations sont **posées verticalement sur une grille**, avec unités,
+dizaines, centaines, milliers, etc. alignés :
 
-Chaque niveau raconte une aventure complète du petit dragon **Pipo**, en dix étapes
-liées. Le texte de la scène et la mission expliquent pourquoi le prochain mot est
-nécessaire. Une réussite donne un objet ou accomplit une action utilisée dans la
-suite : il faut résoudre l’étape actuelle pour débloquer la suivante.
+1. Touchez une case du résultat (ou d’un produit intermédiaire).
+2. Touchez un chiffre **0 à 9** sur le pavé numérique toujours visible.
+3. Sélectionnez vous-même la prochaine case, en calculant de droite à gauche.
+4. Utilisez **Effacer cette case** pour corriger, puis **Vérifier**.
+5. Une erreur colore la ligne en rouge et affiche « Recommence ». La saisie
+   reste disponible pour la corriger. Une réussite affiche « Bravo », joue un
+   son aigu et débloque le calcul suivant.
 
-Pipo est dessiné en SVG directement dans la page ; de petites vignettes accompagnent
-chaque scène, sans images externes. Un mauvais choix affiche une mésaventure
-personnalisée, une image de surprise et le contresens obtenu. Ce détour reste
-temporaire : la bonne réponse répare l’accident et reprend l’histoire principale.
-Il n’y a ni perte de vie, ni punition, ni scène effrayante.
+Les petites cases au-dessus de l’opération servent de **brouillon de retenues
+ou d’emprunts**, saisissable avec le même pavé. Elles ne sont pas évaluées et
+ne constituent pas une démonstration automatique de la méthode. Pour les
+multiplications par deux chiffres, remplissez les deux produits intermédiaires
+(dont la ligne des dizaines avec son zéro de décalage), puis leur somme.
+Les lignes de calcul sont vérifiées ; les zéros en tête peuvent rester vides.
+Une case vide au milieu ou à droite n’est pas acceptée.
 
-Les cinq chapitres suivent Pipo du **gâteau à roulettes** (CP) au **bateau des
-chaussettes** (CE1), puis au **jardin du phare** (CE2), à **la poste des nuages**
-(CM1) et au **spectacle à virgules** (CM2). Lila la souris et Nino le hibou
-l’accompagnent. Chaque chapitre peut aussi se jouer séparément.
+### Difficultés
 
-Le parcours numéroté et le carnet conservent les dix réussites de l’aventure en cours.
-Le dénouement apparaît après la dernière étape. Les niveaux restent accessibles
-librement pour choisir la difficulté ; changer ou recommencer efface le carnet,
-sans sauvegarde entre deux visites.
+- **CP :** additions et soustractions jusqu’à 20, initiation facultative aux
+  multiplications par 2 (groupes d’objets).
+- **CE1 :** nombres à deux chiffres, retenues et premières tables.
+- **CE2 :** nombres à trois chiffres et multiplication par un chiffre.
+- **CM1 :** nombres à quatre chiffres et produits posés par deux chiffres.
+- **CM2 :** nombres à cinq chiffres et produits jusqu’à trois chiffres par deux chiffres.
 
-1. Lisez la **mission** et la phrase à compléter.
-2. **Touchez le bon dessin parmi les trois affiches**, sans mot écrit sur les cartes,
-   sans champ de saisie et sans clavier virtuel. Chaque image correspond à une réponse.
-   Les cartes sont mélangées à chaque étape ; leur nom reste accessible aux lecteurs d’écran.
-3. En cas d’erreur, l’affiche devient rouge avec une croix et
-   le jeu affiche **« Recommence ! »** avec un son grave et la mésaventure.
-   Le carnet, l’étape actuelle et les réussites précédentes sont conservés.
-4. Une bonne réponse affiche **« Bravo ! »**, complète la phrase en vert et joue
-   un son aigu. Après 2,2 secondes, le jeu passe automatiquement à l’étape suivante.
-5. Après la dixième réussite, le bilan et la fin de l’histoire apparaissent automatiquement.
-   Changer ou recommencer un niveau annule toute transition en attente.
+Les niveaux sont indicatifs, pas une certification du programme scolaire.
+Les soustractions n’ont jamais de résultat négatif. Pas de décimales ni divisions.
 
-Les trois affiches illustrent les objets ou actions avec des emojis ou des dessins SVG locaux.
-Les notions abstraites sont représentées par des associations de symboles.
-Chaque mauvais choix déclenche sa mésaventure personnalisée.
-Le rendu des emojis peut varier selon l’appareil.
+Le pavé tactile évite de faire apparaître le clavier natif. Au clavier physique,
+Tab et Entrée activent les boutons ; les chiffres remplissent la case sélectionnée,
+les flèches gauche/droite changent de case et Retour arrière/Suppr efface.
+Les sons sont synthétisés localement et désactivables ; sans audio, les messages
+et symboles restent disponibles. Aucun chronomètre, inscription ou stockage personnel.
+Le bilan indique les dix réussites, les réussites sans erreur et les corrections.
 
-Sur ordinateur, Pipo apparaît à côté de l’exercice ; sur téléphone, les trois affiches
-restent côte à côte. L’introduction et le carnet se déplient
-seulement si souhaité pour laisser la place à la question.
+## Publication
 
-Les phrases ne sont pas lues à haute voix : c’est une dictée à trous visuelle.
-Les pièges mêlent orthographe et compréhension : « plan / plant »,
-« petits pois / petits poids », « bientôt / bien tôt », les virgules d’appel
-comme « Nino, apporte la corde ! » et les négations.
-Les contresens prévus changent l’histoire ou produisent une image absurde ;
-ils ne sont pas tous des contraires exacts, ni tous des fautes d’orthographe.
-Les sons sont synthétisés localement et peuvent être coupés. Si le navigateur
-ne permet pas l’audio, tous les retours restent lisibles. Tab et Entrée permettent
-de jouer au clavier. Aucun chronomètre, inscription ou stockage personnel.
-Changer ou recommencer un niveau remet son bilan à zéro.
-
-## Fichiers et publication
-
-`index.html` contient l’interface, `style.css` la présentation responsive et
-`script.js` les 50 phrases, la progression et les effets sonores.
-
-La publication GitHub Pages depuis une branche utilise `index.html` à la racine.
-Le workflow `.github/workflows/deploy.yml` publie les trois fichiers après un push
-sur `main` ou un lancement manuel. Les chemins relatifs fonctionnent sous `/jeu-space/`.
+`index.html`, `style.css` et `script.js` constituent le site. Les chemins relatifs
+permettent une publication sous `/jeu-space/`. GitHub Pages peut publier la racine
+de la branche configurée ; `.github/workflows/deploy.yml` publie également ces
+trois fichiers sur push vers `main` ou sur lancement manuel.
 
 Adresse prévue : <https://jmecodol.github.io/jeu-space/>.
-Vérifiez le déploiement dans Actions avant de considérer la nouvelle version comme disponible.
+Vérifiez Actions pour connaître l’état effectif du déploiement.
